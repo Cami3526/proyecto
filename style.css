@@ -1,0 +1,454 @@
+/* Paleta Latente Fire: Lujo, Fuego Mediterráneo y Alta Gama */
+:root {
+    --bg-dark: #0A0908;       /* Negro carbón orgánico */
+    --surface-card: #13110F;  /* Arcilla oscura */
+    --text-light: #F9F7F5;    /* Blanco lino puro */
+    --text-muted: #9E948A;    /* Arena tostada */
+    --fire-orange: #FF5A1F;   /* Naranja fuego puro */
+    --fire-gradient: linear-gradient(135deg, #FF7A00 0%, #FF3D00 100%);
+    --accent-gold: #E0A96D;   /* Destello dorado/tierra */
+    --border-subtle: rgba(255, 90, 31, 0.08); /* Bordes con reflejo de fuego */
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: 'Inter', sans-serif;
+    background-color: var(--bg-dark);
+    color: var(--text-light);
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
+    position: relative;
+}
+
+/* Burbuja Flotante de Éxito Premium (Toast Notification) */
+.toast-notification {
+    position: fixed;
+    top: 30px;
+    right: 30px;
+    background: rgba(19, 17, 15, 0.85); /* Transparencia de lujo */
+    backdrop-filter: blur(12px);         /* Efecto cristal esmerilado */
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 90, 31, 0.3); /* Borde fuego sutil */
+    padding: 16px 24px;
+    border-radius: 8px;
+    z-index: 9999;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6), 0 0 30px rgba(255, 90, 31, 0.05);
+    transform: translateY(-100px) scale(0.9);
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); /* Rebote dinámico */
+}
+
+/* Clase activada por JavaScript */
+.toast-notification.show-toast {
+    transform: translateY(0) scale(1);
+    opacity: 1;
+    visibility: visible;
+}
+
+.toast-content {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.toast-icon {
+    font-size: 1.6rem;
+    filter: drop-shadow(0 2px 8px rgba(255, 90, 31, 0.4));
+}
+
+.toast-text h4 {
+    font-weight: 600;
+    font-size: 0.95rem;
+    color: var(--text-light);
+    letter-spacing: 0.5px;
+    margin-bottom: 2px;
+}
+
+.toast-text p {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    font-weight: 300;
+}
+
+/* Efectos de Iluminación Ambiental (Atardecer encendido) */
+.fire-glow-top {
+    position: absolute;
+    top: -15vh;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 90vw;
+    height: 70vh;
+    background: radial-gradient(circle, rgba(255, 90, 31, 0.08) 0%, rgba(255, 61, 0, 0.01) 60%, rgba(10, 9, 8, 0) 100%);
+    z-index: 0;
+    pointer-events: none;
+}
+
+.fire-glow-bottom {
+    position: absolute;
+    bottom: 5vh;
+    right: -10vw;
+    width: 50vw;
+    height: 50vh;
+    background: radial-gradient(circle, rgba(255, 122, 0, 0.04) 0%, rgba(10, 9, 8, 0) 70%);
+    z-index: 0;
+    pointer-events: none;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 80px 24px;
+    position: relative;
+    z-index: 1;
+}
+
+/* Header */
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 100px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.02);
+    padding-bottom: 24px;
+}
+
+.logo {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 2.4rem;
+    font-weight: 300;
+    letter-spacing: 7px;
+    text-transform: uppercase;
+    background: var(--fire-gradient);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.tagline-top {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 3px;
+    color: var(--text-muted);
+}
+
+/* Hero Section */
+.hero {
+    text-align: center;
+    max-width: 900px;
+    margin: 0 auto 120px auto;
+}
+
+.badge {
+    display: inline-block;
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 3px;
+    color: var(--fire-orange);
+    border: 1px solid rgba(255, 90, 31, 0.25);
+    padding: 6px 18px;
+    border-radius: 50px;
+    margin-bottom: 32px;
+    background: rgba(255, 90, 31, 0.03);
+    font-weight: 600;
+}
+
+.hero h1 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 4.2rem;
+    font-weight: 300;
+    line-height: 1.15;
+    margin-bottom: 28px;
+    letter-spacing: -0.5px;
+}
+
+.hero p {
+    font-size: 1.25rem;
+    font-weight: 200;
+    color: var(--text-muted);
+    max-width: 750px;
+    margin: 0 auto;
+}
+
+/* Cards de Características */
+.features {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 32px;
+    margin-bottom: 140px;
+}
+
+.feature-card {
+    background-color: var(--surface-card);
+    border: 1px solid var(--border-subtle);
+    padding: 48px 40px;
+    border-radius: 8px;
+    transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.feature-card:hover {
+    transform: translateY(-8px);
+    border-color: rgba(255, 90, 31, 0.35);
+    box-shadow: 0 20px 50px rgba(255, 90, 31, 0.04);
+}
+
+.icon-wrapper {
+    width: 44px;
+    height: 44px;
+    color: var(--fire-orange);
+    margin-bottom: 32px;
+}
+
+.feature-card h3 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.8rem;
+    font-weight: 300;
+    margin-bottom: 16px;
+    letter-spacing: 0.5px;
+}
+
+.feature-card p {
+    font-size: 0.95rem;
+    font-weight: 300;
+    color: var(--text-muted);
+    line-height: 1.7;
+}
+
+/* Formulario con Inyección de Fuego */
+.registration-section {
+    background: linear-gradient(145deg, #14110F 0%, #0A0908 100%);
+    padding: 80px 60px;
+    border-radius: 12px;
+    max-width: 700px;
+    margin: 0 auto;
+    border: 1px solid var(--border-subtle);
+    box-shadow: 0 40px 100px rgba(0,0,0,0.8);
+    position: relative;
+}
+
+.form-header {
+    text-align: center;
+    margin-bottom: 50px;
+}
+
+.form-header h2 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 2.5rem;
+    font-weight: 300;
+    margin-bottom: 12px;
+    letter-spacing: 0.5px;
+}
+
+.form-header p {
+    font-size: 1rem;
+    font-weight: 300;
+    color: var(--text-muted);
+}
+
+/* Campos de entrada */
+.form-group {
+    margin-bottom: 36px;
+}
+
+.form-group label {
+    display: block;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    margin-bottom: 12px;
+    font-weight: 600;
+    color: var(--text-muted);
+    transition: color 0.3s ease;
+}
+
+.form-control {
+    width: 100%;
+    padding: 16px 0;
+    background-color: transparent;
+    border: none;
+    border-bottom: 1px solid rgba(255, 90, 31, 0.2);
+    font-family: 'Inter', sans-serif;
+    font-size: 1.1rem;
+    font-weight: 300;
+    color: var(--text-light);
+    transition: all 0.3s ease;
+    border-radius: 0;
+}
+
+.form-control:focus {
+    outline: none;
+    border-bottom-color: var(--fire-orange);
+}
+
+.form-group:focus-within label {
+    color: var(--fire-orange);
+}
+
+/* Botón de Fuego Líquido */
+.btn-submit {
+    width: 100%;
+    padding: 22px;
+    background: var(--fire-gradient);
+    color: var(--text-light);
+    border: none;
+    font-family: 'Inter', sans-serif;
+    font-size: 0.9rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 3px;
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 12px;
+    transition: all 0.4s ease;
+    margin-top: 20px;
+    box-shadow: 0 8px 25px rgba(255, 61, 0, 0.2);
+}
+
+.btn-submit .arrow {
+    width: 18px;
+    height: 18px;
+    transition: transform 0.3s ease;
+}
+
+.btn-submit:hover {
+    transform: scale(1.01);
+    box-shadow: 0 12px 35px rgba(255, 61, 0, 0.4);
+}
+
+.btn-submit:hover .arrow {
+    transform: translateX(8px);
+}
+
+/* Footer */
+footer {
+    margin-top: 140px;
+    text-align: center;
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    letter-spacing: 3px;
+    border-top: 1px solid rgba(255, 255, 255, 0.02);
+    padding-top: 40px;
+}
+
+/* Responsivo */
+@media (max-width: 768px) {
+    .hero h1 { font-size: 2.8rem; }
+    .container { padding: 60px 16px; }
+    .registration-section { padding: 50px 24px; }
+}
+.price-notice {
+    grid-column: 1 / -1; /* Ocupa todo el ancho en la rejilla */
+    max-width: 800px;    /* Evita que se estire demasiado en pantallas grandes */
+    margin: 32px auto 0 auto; /* El 'auto' a los lados lo centra perfectamente en la pantalla */
+    background: rgba(24, 24, 27, 0.6);
+    border: 1px solid rgba(63, 63, 70, 0.4);
+    border-radius: 12px;
+    padding: 16px 20px;
+    text-align: center;  /* Centra el texto y el badge por dentro */
+}
+/* Alinea el logo a la izquierda y el botón a la derecha */
+.flex-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 0;
+    border-bottom: 1px solid rgba(63, 63, 70, 0.2);
+    margin-bottom: 40px;
+}
+
+.logo-group {
+    display: flex;
+    align-items: baseline;
+    gap: 12px; /* Espacio entre Latente y Boutique Operations OS */
+}
+
+/* Estilo premium del botón */
+.nav-btn-politicas {
+    display: inline-flex;
+    align-items: center;
+    background: rgba(24, 24, 27, 0.6);
+    border: 1px solid rgba(63, 63, 70, 0.5);
+    color: #e4e4e7;
+    padding: 6px 14px;
+    border-radius: 8px;
+    font-size: 11px;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    text-decoration: none;
+    transition: all 0.2s ease-in-out;
+}
+
+.nav-btn-politicas svg {
+    width: 14px;
+    height: 14px;
+    color: #f59e0b; /* Color ámbar para el escudo */
+    margin-right: 6px;
+}
+
+/* Efectos Hover */
+.nav-btn-politicas:hover {
+    background: rgba(39, 39, 42, 0.8);
+    border-color: rgba(245, 158, 11, 0.4);
+    color: #ffffff;
+    box-shadow: 0 0 12px rgba(245, 158, 11, 0.1);
+    transform: translateY(-1px);
+}
+/* Contenedor de los botones del header */
+.nav-buttons-group {
+    display: flex;
+    align-items: center;
+    gap: 12px; /* Separación perfecta entre ambos botones */
+}
+
+/* Estilo para el botón de Quiénes Somos */
+.nav-btn-nosotros {
+    display: inline-flex;
+    align-items: center;
+    background: transparent;
+    border: 1px solid transparent;
+    color: #a1a1aa; /* Color gris suave */
+    padding: 6px 12px;
+    border-radius: 8px;
+    font-size: 11px;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    text-decoration: none;
+    transition: all 0.2s ease-in-out;
+}
+
+/* Hover del botón Quiénes Somos */
+.nav-btn-nosotros:hover {
+    color: #ffffff; /* Brilla a blanco */
+    background: rgba(39, 39, 42, 0.4);
+    border-color: rgba(63, 63, 70, 0.3);
+}
+
+/* Re-asegurar los estilos de la cabecera flex */
+.flex-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 0;
+    margin-bottom: 40px;
+}
+
+.logo-group {
+    display: flex;
+    align-items: baseline;
+    gap: 12px;
+}
+/* Contenedor para los botones del header */
+.nav-buttons-group {
+    display: flex;
+    align-items: center;
+    gap: 16px; /* Espacio entre los dos botones */
+}

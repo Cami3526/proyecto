@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Monitoreo General PMS</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+<!-- PASO OBLIGATORIO DE LA APP -->
+    <link rel="manifest" href="manifest.json">
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('service-worker.js')
+                    .then(reg => console.log('¡Latente OS listo para instalarse!', reg))
+                    .catch(err => console.error('Error con el Service Worker', err));
+            });
+        }
+    </script>
+</head>
+<body class="min-h-screen bg-zinc-950 text-white p-8 font-sans">
+
+    <div class="max-w-6xl mx-auto">
+        
+        <div class="flex justify-between items-center mb-10 border-b border-zinc-800 pb-6">
+            <div>
+                <span class="text-xs font-semibold tracking-widest text-amber-400 uppercase">Vista Global Operativa</span>
+                <h1 class="text-3xl font-bold tracking-wide mt-1">Monitoreo de Hosteles</h1>
+                <p class="text-zinc-400 text-sm mt-1">Control visual rápido del estado actual de aseos y llaves de las propiedades.</p>
+            </div>
+            <div class="flex gap-3">
+                <a href="admin.html" class="bg-zinc-800 hover:bg-zinc-700 border border-zinc-700 px-4 py-2 rounded-xl text-sm font-medium transition-all">
+                    🎮 Panel Operativo (Asignar Tareas)
+                </a>
+                <a href="index.html" target="_blank" class="bg-amber-500 hover:bg-amber-600 text-zinc-950 px-4 py-2 rounded-xl text-sm font-semibold transition-all shadow-lg shadow-amber-500/10">
+                    + Registrar Nuevo
+                </a>
+            </div>
+        </div>
+
+        <div class="bg-zinc-900 border border-zinc-800 rounded-2xl shadow-2xl overflow-hidden">
+            <table class="w-full text-left border-collapse">
+                <thead>
+                    <tr class="bg-zinc-900 border-b border-zinc-800 text-xs font-semibold uppercase tracking-wider text-zinc-400">
+                        <th class="px-6 py-4">ID</th>
+                        <th class="px-6 py-4">Nombre de la Propiedad</th>
+                        <th class="px-6 py-4">Ubicación</th>
+                        <th class="px-6 py-4">Estado del Aseo</th>
+                        <th class="px-6 py-4">Control de Llaves</th>
+                    </tr>
+                </thead>
+                <tbody id="tablaHosteles" class="divide-y divide-zinc-800 text-sm text-zinc-300">
+                    <tr id="filaCarga">
+                        <td colspan="5" class="px-6 py-12 text-center text-zinc-500 animate-pulse">
+                            Consultando estados en la nube...
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+            const tabla = document.getElementById('tablaHosteles');
+            const filaCarga = document.getElementById('filaCarga');
+
+            // Endpoint de lectura de tu Supabase
+            const url = "https://aypexczsibphswwvyhwr.supabase.co/rest/v1/hosteles?select=*";
+            const apiKey = "sb_publishable_Hwrfm1J522BsTaJ26-bSXA_AitgcZwV";
+
+            try {
+                const respuesta = await fetch(url, {
+                    method: 'GET',
+                    headers: {
+                        'apikey': apiKey,
+                        'Authorization': `Bearer ${apiKey}`,
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                if (!respuesta.ok) throw new Error("No se pudieron consultar los datos.");
+
+                const listaHosteles = await respuesta.json();
+
+                // Quitamos el mensaje de "cargando"
+                filaCarga.remove();
+
+                if (listaHosteles.length === 0) {
+                    tabla.innerHTML = `
+                        <tr>
+                            <td colspan="5" class="px-6 py-8 text-center text-zinc-500">No hay propiedades registradas todavía.</td>
+                        </tr>
+                    `;
+                    return;
+                }
+
+                // Dibujamos las filas con los estados dinámicos
+                listaHosteles.forEach(hostel => {
+                    const fila = document.createElement('tr');
+                    fila.className = "hover:bg-zinc-800/40 transition-colors";
+                    
+                    // Lógica de colores para la columna de Aseo
+                    let claseAseo = "";
+                    if (hostel.estado_aseo === 'Sucio') {
+                        claseAseo = "bg-red-500/10 text-red-400 border border-red-500/20";
+                    } else if (hostel.estado_aseo === 'En Proceso') {
+                        claseAseo = "bg-amber-500/10 text-amber-400 border border-amber-500/20";
+                    } else {
+                        claseAseo = "bg-green-500/10 text-green-400 border border-green-500/20";
+                    }
+
+                    // Lógica de colores para la columna de Llaves
+                    let claseLlaves = hostel.estado_llaves === 'Entregadas' 
+                        ? "bg-blue-500/10 text-blue-400 border border-blue-500/20" 
+                        : "bg-zinc-800 text-zinc-400 border border-zinc-700";
+                    
+                    fila.innerHTML = `
+                        <td class="px-6 py-4 font-mono text-amber-500 font-bold">${hostel.id}</td>
+                        <td class="px-6 py-4 font-medium text-white">${hostel.nombre}</td>
+                        <td class="px-6 py-4 text-zinc-400">${hostel.ubicacion}</td>
+                        <td class="px-6 py-4">
+                            <span class="px-3 py-1 text-xs rounded-full font-semibold tracking-wide ${claseAseo}">
+                                ${hostel.estado_aseo || 'Limpio'}
+                            </span>
+                        </td>
+                        <td class="px-6 py-4">
+                            <span class="px-3 py-1 text-xs rounded-full font-semibold tracking-wide ${claseLlaves}">
+                                🔑 ${hostel.estado_llaves || 'En Oficina'}
+                            </span>
+                        </td>
+                    `;
+                    
+                    tabla.appendChild(fila);
+                });
+
+            } catch (error) {
+                console.error(error);
+                filaCarga.innerHTML = `
+                    <td colspan="5" class="px-6 py-8 text-center text-red-400">
+                        Error al conectar con el servidor de monitoreo: ${error.message}
+                    </td>
+                `;
+            }
+        });
+    </script>
+</body>
+</html>

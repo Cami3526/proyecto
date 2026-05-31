@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Latente | El Pulso Invisible de la Hospitalidad de Lujo</title>
+    <!-- Fuentes premium -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300&family=Inter:wght@100;300;400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <!-- Capas de luz ambiental estilo atardecer mediterráneo -->
+    <div class="fire-glow-top"></div>
+    <div class="fire-glow-bottom"></div>
+
+    <!-- Burbuja Flotante de Éxito (Oculta por defecto) -->
+    <div id="toast" class="toast-notification">
+        <div class="toast-content">
+            <span class="toast-icon">🔥</span>
+            <div class="toast-text">
+                <h4>Registro Exitoso</h4>
+                <p>Su entorno Latente está siendo procesado.</p>
+            </div>
+        </div>
+    </div>
+
+   <div class="container">
+    <header class="flex-header">
+        <div class="logo-group">
+            <div class="logo">Latente</div>
+            <div class="tagline-top">Boutique Operations OS</div>
+        </div>
+        
+        <div class="nav-buttons-group">
+            <a href="nosotros.html" class="nav-btn-nosotros">Quiénes Somos</a>
+            <a href="politicas.html" class="nav-btn-politicas">
+                <svg class="w-4 h-4 text-amber-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" style="width: 14px; height: 14px; display: inline-block; vertical-align: middle; margin-right: 4px;">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285z"/>
+                </svg>
+                Políticas y Garantía
+            </a>
+        </div>
+    </header>
+
+        <!-- Hero Section con fuego en los textos -->
+        <section class="hero">
+            <span class="badge">Mediterranean Fire & Luxury</span>
+            <h1>El pulso invisible de la hospitalidad de lujo</h1>
+            <p>La automatización silenciosa que las propiedades de diseño estaban esperando. Gestione accesos, coordine equipos y mantenga el control absoluto sin alterar la calma de su santuario.</p>
+        </section>
+
+        <!-- 1. PRIMERO: Sección de Formulario de Registro Eléctrico -->
+        <section class="registration-section" style="margin-bottom: 120px;">
+            <div class="form-header">
+                <h2>Inicie la evolución de su propiedad</h2>
+                <p>Complete el registro para solicitar la integración de su ecosistema personalizado.</p>
+            </div>
+            
+            <!-- Formulario con ID corregido para el script script -->
+            <form id="latenteForm">
+                <div class="form-group">
+                    <label for="nombre">Nombre de la propiedad</label>
+                    <input type="text" id="nombre" name="nombre" class="form-control" placeholder="Ej. Casa Almar Boutique" required>
+                </div>
+                <div class="form-group">
+                    <label for="ubicacion">Ubicación geográfica</label>
+                    <input type="text" id="ubicacion" name="ubicacion" class="form-control" placeholder="Ej. Costa Brava, España" required>
+                </div>
+                <div class="form-group">
+                    <label for="telefono">Línea directa de contacto</label>
+                    <input type="tel" id="telefono" name="telefono" class="form-control" placeholder="Ej. +34 600 000 000" required>
+                </div>
+                <button type="submit" class="btn-submit">
+                    <span>Solicitar Acceso Privado</span>
+                    <svg class="arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                        <path d="M5 12h14M12 5l7 7-7 7"/>
+                    </svg>
+                </button>
+            </form>
+        </section>
+
+       <section class="features">
+            <div class="feature-card">
+                <div class="icon-wrapper">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2">
+                        <path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5M14 9l1.5-1.5M17 6l1.5-1.5M16 10l1.5-1.5"/>
+                    </svg>
+                </div>
+                <h3>Gestión de Llaves</h3>
+                <p>Control riguroso en la entrega y recepción de accesos. Monitoree de forma segura el inventario de llaves de sus propiedades de lujo para garantizar transiciones fluidas sin fricciones en el check-in.</p>
+            </div>
+
+            <div class="feature-card">
+                <div class="icon-wrapper">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2">
+                        <path d="M12 3v3m0 12v3M3 12h3m12 0h3m-3.5-6.51l-2 2m-9 9l-2-2m11 0l2 2m-11-11l-2-2M12 8a4 4 0 1 0 0 8 4 4 0 0 0 0-8z"/>
+                    </svg>
+                </div>
+                <h3>Aseo de Alto Estándar</h3>
+                <p>Mantenga un nivel operativo de cinco estrellas. Supervise en tiempo real si cada hostel se encuentra Sucio, En Proceso o Limpio, asegurando que cada propiedad esté impecable antes de la llegada VIP.</p>
+            </div>
+
+            <div class="feature-card">
+                <div class="icon-wrapper">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2">
+                        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8zm14 10v-2a4 4 0 0 0-3-3.87m-4-12a4 4 0 0 1 0 7.75"/>
+                    </svg>
+                </div>
+                <h3>Personal Asignado</h3>
+                <p>Asignación directa y comunicación en tiempo real con su equipo de confianza. Vincule operarios específicos a cada labor y notifique novedades de forma instantánea y bajo un control 100% manual.</p>
+            </div>
+
+            <div class="price-notice col-span-full">
+                <p>
+                    <span class="notice-badge">Nota Importante</span> 
+                    Las tarifas de los servicios y planes son de referencia. Los costos finales pueden variar y ajustarse de manera personalizada dependiendo de las dimensiones del predio, la ubicación geográfica y los requerimientos específicos de cada propiedad.
+                </p>
+            </div>
+        </section>
+
+        <footer>
+            <p>&copy; 2026 LATENTE. QUIET LUXURY OPERATIONS. ALL RIGHTS RESERVED.</p>
+        </footer>
+    </div>
+
+ <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+
+    <script>
+        // 2. CONFIGURACIÓN ABSOLUTA (SUPABASE + MAKE FIJO)
+        const SUPABASE_URL = 'https://aypexczsibphswwvyhwr.supabase.co'; 
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImF5cGV4Y3pzaWJwaHN3d3Z5aHdyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk5ODQ3MzIsImV4cCI6MjA5NTU2MDczMn0.-Dyvg3BJfIz8P49qE5EW9pilfToCcE2NjHu4KML3yeM'; 
+        const URL_MAKE = 'https://hook.eu1.make.com/vqmnyx963qhwsl5wcnh1ten8dfcveq73'; 
+        
+        let _supabase;
+
+        // Aseguramos que la librería cargue correctamente en el navegador
+        window.addEventListener('DOMContentLoaded', () => {
+            if (typeof supabase !== 'undefined') {
+                _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+                console.log("Supabase listo para la acción.");
+            } else {
+                console.error("La librería Supabase no se pudo cargar.");
+            }
+        });
+
+        document.getElementById('latenteForm').addEventListener('submit', function(e) {
+            e.preventDefault(); // Detiene recargas de página
+
+            // Capturar datos del formulario
+            const nombreForm = document.getElementById('nombre').value;
+            const ubicacionForm = document.getElementById('ubicacion').value;
+            const telefonoForm = document.getElementById('telefono').value;
+
+            // ========================================================
+            // 🌟 ACCIÓN 1: LA BURBUJA PREMIUM (SALE DE INMEDIATO)
+            // ========================================================
+            const toast = document.getElementById('toast');
+            if (toast) {
+                toast.classList.add('show-toast');
+                setTimeout(() => { toast.classList.remove('show-toast'); }, 4000);
+            }
+
+            // Limpiamos los campos visualmente
+            document.getElementById('latenteForm').reset();
+
+            // ========================================================
+            // 📨 ACCIÓN 2: DISPARO A MAKE (GMAIL DIRECTO)
+            // ========================================================
+            fetch(URL_MAKE, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    nombre: nombreForm,
+                    ubicacion: ubicacionForm,
+                    telefono: telefonoForm
+                })
+            })
+            .then(res => console.log("Make alertado correctamente"))
+            .catch(err => console.error("Error en notificación a Make:", err));
+
+            // ========================================================
+            // 🗄️ ACCIÓN 3: INSERCIÓN CON TODAS LAS COLUMNAS EN SUPABASE
+            // ========================================================
+            if (_supabase) {
+                _supabase
+                    .from('hosteles')
+                    .insert([
+                        { 
+                            nombre: nombreForm, 
+                            ubicacion: ubicacionForm,
+                            telefono: telefonoForm, // <--- ¡AQUÍ MANDAMOS EL TELÉFONO QUE FALTA!
+                            owner_id: 1,
+                            descripcion: "Nuevo registro desde Landing",
+                            tipo_administracion: "Por definir",
+                            estado_aseo: "Por definir",
+                            estado_llaves: "Por definir"
+                        }
+                    ])
+                    .then(({ data, error }) => {
+                        if (error) {
+                            console.error("Supabase rechazó los datos:", error);
+                        } else {
+                            console.log("¡Éxito total! Guardado en Supabase.");
+                        }
+                    })
+                    .catch(err => console.error("Error de conexión con Supabase:", err));
+            } else {
+                console.error("No se puede guardar: Supabase no está inicializado.");
+            }
+        });
+    </script>
+    
+</body>
+</html>
