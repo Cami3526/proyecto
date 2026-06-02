@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Latente - Iniciar Sesión</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #0d0d0d;
+            margin: 0;
+            font-family: sans-serif;
+        }
+        .login-card {
+            background: #1a1a1a;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.5);
+            border: 1px solid #2a2a2a;
+            text-align: center;
+            width: 100%;
+            max-width: 350px;
+        }
+        .login-card h2 {
+            color: #ff6b00;
+            margin-bottom: 5px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+        .login-card p {
+            color: #888;
+            font-size: 14px;
+            margin-bottom: 30px;
+        }
+        .input-group {
+            margin-bottom: 20px;
+            text-align: left;
+        }
+        .input-group label {
+            color: #ccc;
+            display: block;
+            margin-bottom: 5px;
+            font-size: 12px;
+        }
+        .input-group input {
+            width: 100%;
+            padding: 12px;
+            background: #262626;
+            border: 1px solid #3d3d3d;
+            border-radius: 6px;
+            color: #fff;
+            box-sizing: border-box;
+        }
+        .input-group input:focus {
+            border-color: #ff6b00;
+            outline: none;
+        }
+        .btn-login {
+            width: 100%;
+            padding: 12px;
+            background: #ff6b00;
+            border: none;
+            border-radius: 6px;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        .btn-login:hover {
+            background: #e05e00;
+        }
+        #error-msg {
+            color: #ff3333;
+            font-size: 13px;
+            margin-top: 15px;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+
+<div class="login-card">
+    <h2>LATENTE</h2>
+    <p>Boutique Operations OS</p>
+    
+    <form id="login-form">
+        <div class="input-group">
+            <label>Correo Electrónico</label>
+            <input type="email" id="email" placeholder="usuario@latente.com" required>
+        </div>
+
+        <div class="input-group">
+            <label>Contraseña</label>
+            <input type="password" id="password" placeholder="••••••••" required>
+        </div>
+
+        <div id="error-msg"></div>
+
+        <button type="submit" class="btn-login" id="btn-ingresar" style="margin-top: 15px;">Ingresar al Sistema</button>
+    </form>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+    // Usamos supabaseClient para que NO choque con la librería global 'supabase'
+    const SUPABASE_URL = "https://aypexczsibphswwvyhwr.supabase.co"; 
+    const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImF5cGV4Y3pzaWJwaHN3d3Z5aHdyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk5ODQ3MzIsImV4cCI6MjA5NTU2MDczMn0.-Dyvg3BJfIz8P49qE5EW9pilfToCcE2NjHu4KML3yeM";
+    
+    // Aquí invocamos la librería de forma correcta
+    const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+    const loginForm = document.getElementById('login-form');
+    const errorMsg = document.getElementById('error-msg');
+
+    if (loginForm) {
+        loginForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+
+            const emailInput = document.getElementById('email');
+            const passwordInput = document.getElementById('password');
+
+            if (!emailInput || !passwordInput) return;
+
+            const email = emailInput.value.trim();
+            const password = passwordInput.value;
+
+            if (errorMsg) errorMsg.style.display = 'none';
+
+            try {
+                // Usamos la variable corregida supabaseClient
+                const { data, error } = await supabaseClient.auth.signInWithPassword({
+                    email: email,
+                    password: password,
+                });
+
+                if (error) {
+                    console.error("Error devuelto por Supabase:", error.message);
+                    if (errorMsg) {
+                        errorMsg.innerText = "Usuario o contraseña incorrectos.";
+                        errorMsg.style.display = 'block';
+                    }
+                } else if (data && data.session) {
+                    console.log("¡Sesión iniciada con éxito!");
+                    window.location.href = 'dashboard.html';
+                }
+            } catch (err) {
+                console.error("Error crítico en el proceso:", err);
+            }
+        });
+    }
+</script>
+</body>
+</html>

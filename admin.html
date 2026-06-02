@@ -16,6 +16,30 @@
             });
         }
     </script>
+  <script>
+    // CREDENCIALES OFICIALES DE LATENTE (CORREGIDAS)
+    const SUPABASE_URL = "https://aypexczsibphswwvyhwr.supabase.co"; 
+    const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImF5cGV4Y3pzaWJwaHN3d3Z5aHdyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk5ODQ3MzIsImV4cCI6MjA5NTU2MDczMn0.-Dyvg3BJfIz8P49qE5EW9pilfToCcE2NjHu4KML3yeM";
+    
+    // Creación correcta del cliente usando la librería global
+    const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+    // Comprobar la sesión de inmediato
+    async function verificarSesion() {
+        try {
+            const { data: { session } } = await supabaseClient.auth.getSession();
+            if (!session) {
+                // Si no hay sesión, directo a la pantalla de login correcta
+                window.location.href = 'login.html';
+            }
+        } catch (error) {
+            console.error("Error validando sesión:", error);
+            window.location.href = 'login.html';
+        }
+    }
+
+    verificarSesion();
+</script>
 </head>
 <body class="min-h-screen bg-zinc-950 text-white p-8 font-sans">
 
