@@ -3,167 +3,132 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard - Monitoreo General PMS</title>
-    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
-    <link rel="manifest" href="manifest.json">
-    <script>
-        if ('serviceWorker' in navigator) {
-            window.addEventListener('load', () => {
-                navigator.serviceWorker.register('service-worker.js')
-                    .then(reg => console.log('¡Latente OS listo para instalarse!', reg))
-                    .catch(err => console.error('Error con el Service Worker', err));
-            });
-        }
-    </script>
-    
+    <title>Latente - Dashboard Operativo</title>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+        /* Paleta Latente Fire: Lujo, Fuego y Alta Gama */
+        :root {
+            --bg-dark: #0A0908;       
+            --surface-card: #13110F;  
+            --text-light: #F9F7F5;    
+            --text-muted: #9E948A;    
+            --fire-orange: #FF5A1F;   
+            --fire-gradient: linear-gradient(135deg, #FF7A00 0%, #FF3D00 100%);
+            --accent-gold: #E0A96D;   
+            --border-subtle: rgba(255, 90, 31, 0.08); 
+        }
 
-    <style id="anti-flicker">
-        body { display: none !important; }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', sans-serif; }
+        
+        body { background-color: var(--bg-dark); color: var(--text-light); min-height: 100vh; padding: 2rem; }
+        
+        header { display: flex; justify-content: space-between; align-items: center; padding-bottom: 2rem; border-bottom: 1px solid var(--border-subtle); margin-bottom: 2rem; }
+        
+        .logo { font-size: 1.8rem; font-weight: bold; letter-spacing: 1px; }
+        .logo span { background: var(--fire-gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        
+        .subtitle { color: var(--text-muted); font-size: 0.9rem; margin-top: 0.3rem; }
+        
+        .btn-refresh { background: transparent; color: var(--accent-gold); border: 1px solid var(--accent-gold); padding: 0.6rem 1.2rem; border-radius: 6px; cursor: pointer; font-weight: 600; transition: all 0.3s ease; }
+        .btn-refresh:hover { background: var(--accent-gold); color: var(--bg-dark); }
+        
+        .grid-hosteles { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 1.5rem; }
+        
+        .card { background-color: var(--surface-card); border: 1px solid var(--border-subtle); border-radius: 12px; padding: 1.5rem; box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3); position: relative; overflow: hidden; }
+        .card::before { content: ''; position: absolute; top: 0; left: 0; width: 4px; height: 100%; background: var(--fire-gradient); }
+        
+        .hostel-name { font-size: 1.3rem; font-weight: 600; margin-bottom: 0.2rem; }
+        .hostel-location { font-size: 0.85rem; color: var(--accent-gold); margin-bottom: 0.5rem; }
+        .hostel-phone { font-size: 0.9rem; color: var(--text-muted); margin-bottom: 1rem; }
+        
+        .ops-control { border-top: 1px solid rgba(255, 255, 255, 0.05); padding-top: 1rem; display: flex; flex-direction: column; gap: 0.8rem; }
+        .status-row { display: flex; justify-content: space-between; align-items: center; font-size: 0.85rem; }
+        .status-label { color: var(--text-muted); }
+        
+        .badge { padding: 0.3rem 0.6rem; border-radius: 20px; font-size: 0.75rem; font-weight: bold; text-transform: uppercase; background-color: rgba(158, 148, 138, 0.15); color: var(--text-muted); }
+        
+        .loading, .empty { grid-column: 1 / -1; text-align: center; padding: 3rem; color: var(--text-muted); font-style: italic; }
     </style>
+</head>
+<body>
+    <header>
+        <div>
+            <div class="logo">LATENTE <span>OS</span></div>
+            <div class="subtitle">Control Operativo de Propiedades • Alto Ricaute</div>
+        </div>
+        <button class="btn-refresh" id="btnRefresh">Actualizar Tablero</button>
+    </header>
+
+    <main>
+        <div class="grid-hosteles" id="contenedorHosteles">
+            <div class="loading">Cargando propiedades registradas...</div>
+        </div>
+    </main>
 
     <script>
-        // CLIENTE ÚNICO OFICIAL DE SUPABASE
+        // Mismas credenciales e identidad que el login
         const SUPABASE_URL = "https://aypexczsibphswwvyhwr.supabase.co"; 
         const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImF5cGV4Y3pzaWJwaHN3d3Z5aHdyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk5ODQ3MzIsImV4cCI6MjA5NTU2MDczMn0.-Dyvg3BJfIz8P49qE5EW9pilfToCcE2NjHu4KML3yeM";
         
+        // Usamos EXACTAMENTE la misma variable global
         const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-        async function verificarSesion() {
-            try {
-                const { data: { session } } = await supabaseClient.auth.getSession();
-                if (!session) {
-                    window.location.href = 'login.html';
-                } else {
-                    const antiFlicker = document.getElementById('anti-flicker');
-                    if (antiFlicker) antiFlicker.remove();
-                    // Ejecutar la carga de la tabla de hosteles una vez autorizada la sesión
-                    cargarDatosHosteles();
-                }
-            } catch (error) {
-                console.error("Error validando sesión:", error);
-                window.location.href = 'login.html';
-            }
-        }
-
-        // Ejecutar inmediatamente en el head
-        verificarSesion();
-    </script>
-</head>
-<body class="min-h-screen bg-zinc-950 text-white p-8 font-sans">
-
-    <div class="max-w-6xl mx-auto">
-        
-        <div class="flex justify-between items-center mb-10 border-b border-zinc-800 pb-6">
-            <div>
-                <span class="text-xs font-semibold tracking-widest text-amber-400 uppercase">Vista Global Operativa</span>
-                <h1 class="text-3xl font-bold tracking-wide mt-1">Monitoreo de Hosteles</h1>
-                <p class="text-zinc-400 text-sm mt-1">Control visual rápido del estado actual de aseos y llaves de las propiedades.</p>
-            </div>
-            <div class="flex gap-3">
-                <a href="admin.html" class="bg-zinc-800 hover:bg-zinc-700 border border-zinc-700 px-4 py-2 rounded-xl text-sm font-medium transition-all">
-                    🎮 Panel Operativo (Asignar Tareas)
-                </a>
-                <a href="index.html" target="_blank" class="bg-amber-500 hover:bg-amber-600 text-zinc-950 px-4 py-2 rounded-xl text-sm font-semibold transition-all shadow-lg shadow-amber-500/10">
-                    + Registrar Nuevo
-                </a>
-            </div>
-        </div>
-
-        <div class="bg-zinc-900 border border-zinc-800 rounded-2xl shadow-2xl overflow-hidden">
-            <table class="w-full text-left border-collapse">
-                <thead>
-                    <tr class="bg-zinc-900 border-b border-zinc-800 text-xs font-semibold uppercase tracking-wider text-zinc-400">
-                        <th class="px-6 py-4">ID</th>
-                        <th class="px-6 py-4">Nombre de la Propiedad</th>
-                        <th class="px-6 py-4">Ubicación</th>
-                        <th class="px-6 py-4">Estado del Aseo</th>
-                        <th class="px-6 py-4">Control de Llaves</th>
-                    </tr>
-                </thead>
-                <tbody id="tablaHosteles" class="divide-y divide-zinc-800 text-sm text-zinc-300">
-                    <tr id="filaCarga">
-                        <td colspan="5" class="px-6 py-12 text-center text-zinc-500 animate-pulse">
-                            Consultando estados en la nube...
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-
-    </div>
-
-    <script>
-        async function cargarDatosHosteles() {
-            const tabla = document.getElementById('tablaHosteles');
-            const filaCarga = document.getElementById('filaCarga');
+        async function cargarDashboard() {
+            const contenedor = document.getElementById('contenedorHosteles');
+            contenedor.innerHTML = `<div class="loading">Consultando base de datos...</div>`;
 
             try {
-                // Consulta nativa directa a la tabla 'hosteles'
-                const { data: listaHosteles, error } = await supabaseClient
+                // Traer datos de la tabla 'hosteles' ordenados por el más reciente
+                const { data: hosteles, error } = await supabaseClient
                     .from('hosteles')
-                    .select('*');
+                    .select('*')
+                    .order('id', { ascending: false });
 
                 if (error) throw error;
 
-                if (filaCarga) filaCarga.remove();
-
-                if (!listaHosteles || listaHosteles.length === 0) {
-                    tabla.innerHTML = `
-                        <tr>
-                            <td colspan="5" class="px-6 py-8 text-center text-zinc-500">No hay propiedades registradas todavía.</td>
-                        </tr>
-                    `;
+                if (!hosteles || hosteles.length === 0) {
+                    contenedor.innerHTML = `<div class="empty">No hay propiedades registradas todavía.</div>`;
                     return;
                 }
 
-                listaHosteles.forEach(hostel => {
-                    const fila = document.createElement('tr');
-                    fila.className = "hover:bg-zinc-800/40 transition-colors";
-                    
-                    let claseAseo = "";
-                    if (hostel.estado_aseo === 'Sucio') {
-                        claseAseo = "bg-red-500/10 text-red-400 border border-red-500/20";
-                    } else if (hostel.estado_aseo === 'En Proceso') {
-                        claseAseo = "bg-amber-500/10 text-amber-400 border border-amber-500/20";
-                    } else {
-                        claseAseo = "bg-green-500/10 text-green-400 border border-green-500/20";
-                    }
-
-                    let claseLlaves = hostel.estado_llaves === 'Entregadas' 
-                        ? "bg-blue-500/10 text-blue-400 border border-blue-500/20" 
-                        : "bg-zinc-800 text-zinc-400 border border-zinc-700";
-                    
-                    fila.innerHTML = `
-                        <td class="px-6 py-4 font-mono text-amber-500 font-bold">${hostel.id}</td>
-                        <td class="px-6 py-4 font-medium text-white">${hostel.nombre}</td>
-                        <td class="px-6 py-4 text-zinc-400">${hostel.ubicacion}</td>
-                        <td class="px-6 py-4">
-                            <span class="px-3 py-1 text-xs rounded-full font-semibold tracking-wide ${claseAseo}">
-                                ${hostel.estado_aseo || 'Limpio'}
-                            </span>
-                        </td>
-                        <td class="px-6 py-4">
-                            <span class="px-3 py-1 text-xs rounded-full font-semibold tracking-wide ${claseLlaves}">
-                                🔑 ${hostel.estado_llaves || 'En Oficina'}
-                            </span>
-                        </td>
+                contenedor.innerHTML = '';
+                
+                // Dibujar cada tarjeta en la interfaz
+                hosteles.forEach(hostel => {
+                    const card = document.createElement('div');
+                    card.className = 'card';
+                    card.innerHTML = `
+                        <div class="card-header">
+                            <div class="hostel-name">${hostel.nombre || 'Sin Nombre'}</div>
+                            <div class="hostel-location">📍 ${hostel.ubicacion || 'Sin Ubicación'}</div>
+                        </div>
+                        <div class="hostel-phone">📞 Tel: ${hostel.telefono || 'No registrado'}</div>
+                        <div class="ops-control">
+                            <div class="status-row">
+                                <span class="status-label">Servicio de Aseo:</span>
+                                <span class="badge">${hostel.estado_aseo || 'Por definir'}</span>
+                            </div>
+                            <div class="status-row">
+                                <span class="status-label">Control de Llaves:</span>
+                                <span class="badge">${hostel.estado_llaves || 'Por definir'}</span>
+                            </div>
+                            <div class="status-row">
+                                <span class="status-label">Administración:</span>
+                                <span class="badge">${hostel.tipo_administracion || 'Por definir'}</span>
+                            </div>
+                        </div>
                     `;
-                    
-                    tabla.appendChild(fila);
+                    contenedor.appendChild(card);
                 });
 
-            } catch (error) {
-                console.error("Error cargando tabla:", error);
-                if (filaCarga) {
-                    filaCarga.innerHTML = `
-                        <td colspan="5" class="px-6 py-8 text-center text-red-400">
-                            Error al conectar con el servidor de monitoreo: ${error.message}
-                        </td>
-                    `;
-                }
+            } catch (err) {
+                console.error("Error en Dashboard:", err);
+                contenedor.innerHTML = `<div class="empty" style="color: #ff3d00;">Error de lectura. Si activaste RLS, recuerda añadir la política de SELECT público.</div>`;
             }
         }
+
+        document.getElementById('btnRefresh').addEventListener('click', cargarDashboard);
+        window.addEventListener('DOMContentLoaded', cargarDashboard);
     </script>
 </body>
 </html>
