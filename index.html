@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Latente | El Pulso Invisible de la Hospitalidad de Lujo</title>
-    <!-- Fuentes premium -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300&family=Inter:wght@100;300;400;600&display=swap" rel="stylesheet">
@@ -12,17 +11,15 @@
 </head>
 <body>
 
-    <!-- Capas de luz ambiental estilo atardecer mediterráneo -->
     <div class="fire-glow-top"></div>
     <div class="fire-glow-bottom"></div>
 
-    <!-- Burbuja Flotante de Éxito (Oculta por defecto) -->
     <div id="toast" class="toast-notification">
         <div class="toast-content">
             <span class="toast-icon">🔥</span>
             <div class="toast-text">
                 <h4>Registro Exitoso</h4>
-                <p>Su entorno Latente está siendo procesado nos pondemos en contacto muy pronto.</p>
+                <p>Su entorno Latente está siendo procesado, nos pondremos en contacto muy pronto.</p>
             </div>
         </div>
     </div>
@@ -45,21 +42,18 @@
         </div>
     </header>
 
-        <!-- Hero Section con fuego en los textos -->
         <section class="hero">
             <span class="badge">Mediterranean Fire & Luxury</span>
             <h1>El pulso invisible de la hospitalidad de lujo</h1>
             <p>La automatización silenciosa que las propiedades de diseño estaban esperando. Gestione accesos, coordine equipos y mantenga el control absoluto sin alterar la calma de su santuario.</p>
         </section>
 
-        <!-- 1. PRIMERO: Sección de Formulario de Registro Eléctrico -->
         <section class="registration-section" style="margin-bottom: 120px;">
             <div class="form-header">
                 <h2>Inicie la evolución de su propiedad</h2>
                 <p>Complete el registro para solicitar la integración de su ecosistema personalizado.</p>
             </div>
             
-            <!-- Formulario con ID corregido para el script script -->
             <form id="latenteForm">
                 <div class="form-group">
                     <label for="nombre">Nombre de la propiedad</label>
@@ -126,17 +120,17 @@
         </footer>
     </div>
 
- <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
     <script>
-        // 2. CONFIGURACIÓN ABSOLUTA (SUPABASE + MAKE FIJO)
+        // CONFIGURACIÓN ENTORNO LATENTE
         const SUPABASE_URL = 'https://aypexczsibphswwvyhwr.supabase.co'; 
         const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImF5cGV4Y3pzaWJwaHN3d3Z5aHdyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk5ODQ3MzIsImV4cCI6MjA5NTU2MDczMn0.-Dyvg3BJfIz8P49qE5EW9pilfToCcE2NjHu4KML3yeM'; 
         const URL_MAKE = 'https://hook.eu1.make.com/vqmnyx963qhwsl5wcnh1ten8dfcveq73'; 
         
         let _supabase;
 
-        // Aseguramos que la librería cargue correctamente en el navegador
+        // Inicialización segura del cliente
         window.addEventListener('DOMContentLoaded', () => {
             if (typeof supabase !== 'undefined') {
                 _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
@@ -145,87 +139,87 @@
                 console.error("La librería Supabase no se pudo cargar.");
             }
         });
-document.getElementById('latenteForm').addEventListener('submit', async function(e) {
-    e.preventDefault(); // Detiene recargas de página
 
-    // 1. BLINDAJE ANTI-DUPLICADOS: Congela el botón para evitar clics múltiples
-    const botonEnvio = e.target.querySelector('button[type="submit"]') || document.querySelector('#latenteForm button');
-    if (botonEnvio) {
-        if (botonEnvio.disabled) return; // Si ya está procesando, frena en seco
-        botonEnvio.disabled = true;
-        botonEnvio.innerText = "Registrando...";
-    }
+        document.getElementById('latenteForm').addEventListener('submit', async function(e) {
+            e.preventDefault(); 
 
-    // Capturar datos del formulario
-    const nombreForm = document.getElementById('nombre').value;
-    const ubicacionForm = document.getElementById('ubicacion').value;
-    const telefonoForm = document.getElementById('telefono').value;
-
-    try {
-        // ========================================================
-        // 🌟 ACCIÓN 1: LA BURBUJA PREMIUM (SALE DE INMEDIATO)
-        // ========================================================
-        const toast = document.getElementById('toast');
-        if (toast) {
-            toast.classList.add('show-toast');
-            setTimeout(() => { toast.classList.remove('show-toast'); }, 4000);
-        }
-
-        // Limpiamos los campos visualmente
-        document.getElementById('latenteForm').reset();
-
-        // ========================================================
-        // 📨 ACCIÓN 2: DISPARO A MAKE (GMAIL DIRECTO)
-        // ========================================================
-        await fetch(URL_MAKE, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                nombre: nombreForm,
-                ubicacion: ubicacionForm,
-                telefono: telefonoForm
-            })
-        });
-        console.log("Make alertado correctamente");
-
-        // ========================================================
-        // 🗄️ ACCIÓN 3: INSERCION LIMPIA EN SUPABASE WITH AWAIT
-        // ========================================================
-        if (typeof _supabase !== 'undefined' && _supabase) {
-            const { data, error } = await _supabase
-                .from('hosteles')
-                .insert([
-                    { 
-                        nombre: nombreForm, 
-                        ubicacion: ubicacionForm,
-                        telefono: telefonoForm, 
-                        owner_id: 1,
-                        descripcion: "Nuevo registro desde Landing",
-                        tipo_administracion: "Por definir",
-                        estado_aseo: "Por definir",
-                        estado_llaves: "Por definir"
-                    }
-                ]);
-
-            if (error) {
-                console.error("Supabase rechazó los datos:", error);
-            } else {
-                console.log("¡Éxito total! Guardado en Supabase.");
+            // 1. Control anti-duplicación
+            const botonEnvio = e.target.querySelector('button[type="submit"]');
+            if (botonEnvio) {
+                if (botonEnvio.disabled) return;
+                botonEnvio.disabled = true;
+                botonEnvio.innerHTML = "<span>Registrando...</span>";
             }
-        } else {
-            console.error("No se puede guardar: Supabase no está inicializado.");
-        }
 
-    } catch (err) {
-        console.error("Error en la ejecución del flujo:", err);
-    } finally {
-        // Al terminar todo, devolvemos el botón a su estado normal
-        if (botonEnvio) {
-            botonEnvio.disabled = false;
-            botonEnvio.innerText = "Enviar Registro";
-        }
-    }
-});
+            // Captura interna de variables
+            const nombreForm = document.getElementById('nombre').value;
+            const ubicacionForm = document.getElementById('ubicacion').value;
+            const telefonoForm = document.getElementById('telefono').value;
+
+            try {
+                // ACCIÓN 1: Lanzamiento inmediato de Burbuja Premium
+                const toast = document.getElementById('toast');
+                if (toast) {
+                    toast.classList.add('show-toast');
+                    setTimeout(() => { toast.classList.remove('show-toast'); }, 4000);
+                }
+
+                // Limpieza visual inmediata del formulario
+                document.getElementById('latenteForm').reset();
+
+                // ACCIÓN 2: Disparo paralelo a automatización en Make
+                fetch(URL_MAKE, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        nombre: nombreForm,
+                        ubicacion: ubicacionForm,
+                        telefono: telefonoForm
+                    })
+                }).then(() => console.log("Make alertado correctamente"))
+                  .catch(err => console.error("Error al alertar a Make:", err));
+
+                // ACCIÓN 3: Persistencia asíncrona en la base de datos de Supabase
+                if (typeof _supabase !== 'undefined' && _supabase) {
+                    const { data, error } = await _supabase
+                        .from('hosteles')
+                        .insert([
+                            { 
+                                nombre: nombreForm, 
+                                ubicacion: ubicacionForm,
+                                telefono: telefonoForm, 
+                                owner_id: 1,
+                                descripcion: "Nuevo registro desde Landing",
+                                tipo_administracion: "Por definir",
+                                estado_aseo: "Por definir",
+                                estado_llaves: "Por definir"
+                            }
+                        ]);
+
+                    if (error) {
+                        console.error("Supabase rechazó los datos:", error);
+                    } else {
+                        console.log("¡Éxito total! Guardado en Supabase.");
+                    }
+                } else {
+                    console.error("No se puede guardar: Supabase no está inicializado.");
+                }
+
+            } catch (err) {
+                console.error("Error en la ejecución del flujo:", err);
+            } finally {
+                // Restauramos el botón a su diseño original con su icono SVG
+                if (botonEnvio) {
+                    botonEnvio.disabled = false;
+                    botonEnvio.innerHTML = `
+                        <span>Solicitar Acceso Privado</span>
+                        <svg class="arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                            <path d="M5 12h14M12 5l7 7-7 7"/>
+                        </svg>
+                    `;
+                }
+            }
+        });
     </script>
     
 </body>
