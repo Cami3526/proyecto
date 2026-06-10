@@ -54,6 +54,10 @@
         .status-row { display: flex; justify-content: space-between; align-items: center; font-size: 0.85rem; }
         .status-label { color: var(--text-muted); }
         .badge { padding: 0.3rem 0.6rem; border-radius: 20px; font-size: 0.75rem; font-weight: bold; text-transform: uppercase; background-color: rgba(158, 148, 138, 0.15); color: var(--text-muted); }
+        
+        /* Estilo dinámico exclusivo para el estado de Jardinería */
+        .badge-jardin { background-color: rgba(16, 185, 129, 0.15); color: #10b981; }
+        
         .loading, .empty { grid-column: 1 / -1; text-align: center; padding: 3rem; color: var(--text-muted); font-style: italic; }
     </style>
 </head>
@@ -66,7 +70,6 @@
         
         <div class="header-actions">
             <button class="btn-refresh" id="btnRefresh">Actualizar Tablero</button>
-            <!-- PUENTES DE NAVEGACIÓN TOTALMENTE ENLAZADOS -->
             <a href="admin.html" class="btn-nav btn-panel">🎮 Asignar Tareas (Admin)</a>
             <a href="index.html" class="btn-nav btn-register">📋 Ir al Formulario</a>
         </div>
@@ -106,6 +109,10 @@
                 hosteles.forEach(hostel => {
                     const card = document.createElement('div');
                     card.className = 'card';
+                    
+                    // Capturar el estado de jardinería o poner por definir si viene vacío
+                    const estadoJardineria = hostel.estado_jardineria || 'MANTENIDO';
+
                     card.innerHTML = `
                         <div class="card-header">
                             <div class="hostel-name">${hostel.nombre || 'Sin Nombre'}</div>
@@ -120,6 +127,10 @@
                             <div class="status-row">
                                 <span class="status-label">Control de Llaves:</span>
                                 <span class="badge">${hostel.estado_llaves || 'POR DEFINIR'}</span>
+                            </div>
+                            <div class="status-row">
+                                <span class="status-label">Zonas Verdes / Jardín:</span>
+                                <span class="badge badge-jardin">${estadoJardineria}</span>
                             </div>
                             <div class="status-row">
                                 <span class="status-label">Administración:</span>
