@@ -8,12 +8,22 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300&family=Inter:wght@100;300;400;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
 <body>
+<div class="contenedor-app">
 
+  <section class="bloque-app">
+    </section>
+
+  <section class="bloque-app">
+    </section>
+
+</div>
     <div class="fire-glow-top"></div>
     <div class="fire-glow-bottom"></div>
 
+    <!-- Burbuja flotante para éxito sin redirecciones -->
     <div id="toast" class="toast-notification">
         <div class="toast-content">
             <span class="toast-icon">🔥</span>
@@ -48,6 +58,7 @@
             <p>La automatización silenciosa que las propiedades de diseño estaban esperando. Gestione accesos, coordine equipos y mantenga el control absoluto sin alterar la calma de su santuario.</p>
         </section>
 
+        <!-- Formulario priorizado al inicio de la página -->
         <section class="registration-section" style="margin-bottom: 120px;">
             <div class="form-header">
                 <h2>Inicie la evolución de su propiedad</h2>
@@ -61,11 +72,11 @@
                 </div>
                 <div class="form-group">
                     <label for="ubicacion">Ubicación geográfica</label>
-                    <input type="text" id="ubicacion" name="ubicacion" class="form-control" placeholder="Ej. Costa Brava, España" required>
+                    <input type="text" id="ubicacion" name="ubicacion" class="form-control" placeholder="Ej. Sachicá,Boyacá, Direccion" required>
                 </div>
                 <div class="form-group">
                     <label for="telefono">Línea directa de contacto</label>
-                    <input type="tel" id="telefono" name="telefono" class="form-control" placeholder="Ej. +34 600 000 000" required>
+                    <input type="tel" id="telefono" name="telefono" class="form-control" placeholder="Ej. +57300 0000000" required>
                 </div>
                 <button type="submit" class="btn-submit">
                     <span>Solicitar Acceso Privado</span>
@@ -110,7 +121,7 @@
             <div class="price-notice col-span-full">
                 <p>
                     <span class="notice-badge">Nota Importante</span> 
-                    Las tarifas de los servicios y planes son de referencia. Los costos finales pueden variar y ajustarse de manera personalizada dependiendo de las dimensiones del predio, la ubicación geográfica y los requerimientos específicos de cada propiedad.
+                    Las tarifas de los servicios and planes son de referencia. Los costos finales pueden variar y ajustarse de manera personalizada dependiendo de las dimensiones del predio, la ubicación geográfica y los requerimientos específicos de cada propiedad.
                 </p>
             </div>
         </section>
@@ -123,14 +134,12 @@
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
     <script>
-        // CONFIGURACIÓN ENTORNO LATENTE
         const SUPABASE_URL = 'https://aypexczsibphswwvyhwr.supabase.co'; 
         const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImF5cGV4Y3pzaWJwaHN3d3Z5aHdyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk5ODQ3MzIsImV4cCI6MjA5NTU2MDczMn0.-Dyvg3BJfIz8P49qE5EW9pilfToCcE2NjHu4KML3yeM'; 
         const URL_MAKE = 'https://hook.eu1.make.com/vqmnyx963qhwsl5wcnh1ten8dfcveq73'; 
         
         let _supabase;
 
-        // Inicialización segura del cliente
         window.addEventListener('DOMContentLoaded', () => {
             if (typeof supabase !== 'undefined') {
                 _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
@@ -140,34 +149,33 @@
             }
         });
 
+        // Mecanismo anti-duplicación por software
+        let formularioEnProceso = false;
+
         document.getElementById('latenteForm').addEventListener('submit', async function(e) {
             e.preventDefault(); 
 
-            // 1. Control anti-duplicación
+            if (formularioEnProceso) return;
+            formularioEnProceso = true;
+
             const botonEnvio = e.target.querySelector('button[type="submit"]');
             if (botonEnvio) {
-                if (botonEnvio.disabled) return;
                 botonEnvio.disabled = true;
                 botonEnvio.innerHTML = "<span>Registrando...</span>";
             }
 
-            // Captura interna de variables
-            const nombreForm = document.getElementById('nombre').value;
-            const ubicacionForm = document.getElementById('ubicacion').value;
-            const telefonoForm = document.getElementById('telefono').value;
+            const nombreForm = document.getElementById('nombre').value.trim();
+            const ubicacionForm = document.getElementById('ubicacion').value.trim();
+            const telefonoForm = document.getElementById('telefono').value.trim();
 
             try {
-                // ACCIÓN 1: Lanzamiento inmediato de Burbuja Premium
                 const toast = document.getElementById('toast');
                 if (toast) {
                     toast.classList.add('show-toast');
                     setTimeout(() => { toast.classList.remove('show-toast'); }, 4000);
                 }
 
-                // Limpieza visual inmediata del formulario
-                document.getElementById('latenteForm').reset();
-
-                // ACCIÓN 2: Disparo paralelo a automatización en Make
+                // Disparo dual paralelo: 1. Webhook Make
                 fetch(URL_MAKE, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
@@ -179,7 +187,7 @@
                 }).then(() => console.log("Make alertado correctamente"))
                   .catch(err => console.error("Error al alertar a Make:", err));
 
-                // ACCIÓN 3: Persistencia asíncrona en la base de datos de Supabase
+                // Disparo dual paralelo: 2. Inserción limpia en base de datos en MAYÚSCULAS
                 if (typeof _supabase !== 'undefined' && _supabase) {
                     const { data, error } = await _supabase
                         .from('hosteles')
@@ -188,18 +196,17 @@
                                 nombre: nombreForm, 
                                 ubicacion: ubicacionForm,
                                 telefono: telefonoForm, 
-                                owner_id: 1,
-                                descripcion: "Nuevo registro desde Landing",
-                                tipo_administracion: "Por definir",
-                                estado_aseo: "Por definir",
-                                estado_llaves: "Por definir"
+                                tipo_administracion: "POR DEFINIR",
+                                estado_aseo: "LIMPIO",
+                                estado_llaves: "EN OFICINA"
                             }
                         ]);
 
                     if (error) {
                         console.error("Supabase rechazó los datos:", error);
                     } else {
-                        console.log("¡Éxito total! Guardado en Supabase.");
+                        console.log("¡Éxito total! Guardado único en Supabase.");
+                        document.getElementById('latenteForm').reset();
                     }
                 } else {
                     console.error("No se puede guardar: Supabase no está inicializado.");
@@ -208,7 +215,7 @@
             } catch (err) {
                 console.error("Error en la ejecución del flujo:", err);
             } finally {
-                // Restauramos el botón a su diseño original con su icono SVG
+                formularioEnProceso = false;
                 if (botonEnvio) {
                     botonEnvio.disabled = false;
                     botonEnvio.innerHTML = `
@@ -221,6 +228,5 @@
             }
         });
     </script>
-    
 </body>
 </html>

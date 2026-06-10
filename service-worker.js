@@ -1,4 +1,4 @@
-const CACHE_NAME = 'latente-os-v1';
+const CACHE_NAME = 'latente-os-v10';
 const ASSETS = [
   './',
   './dashboard.html',

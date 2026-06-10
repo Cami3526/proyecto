@@ -452,3 +452,27 @@ footer {
     align-items: center;
     gap: 16px; /* Espacio entre los dos botones */
 }
+/* --- CONFIGURACIÓN PARA CELULARES (Por defecto) --- */
+.contenedor-app {
+  display: flex;
+  flex-direction: column; /* Apila un bloque abajo del otro */
+  gap: 20px;              /* Deja un espacio limpio de separación entre bloques */
+  padding: 15px;          /* Margen interno para que no pegue a los bordes de la pantalla */
+}
+
+.bloque-app {
+  width: 100%;            /* En celular, cada bloque ocupa todo el ancho de la pantalla */
+}
+
+/* --- CONFIGURACIÓN PARA COMPUTADORES --- */
+@media (min-width: 768px) {
+  .contenedor-app {
+    flex-direction: row;  /* Cambia la dirección: ahora se ponen uno al lado del otro */
+    justify-content: space-between; /* Distribuye el espacio entre los dos bloques */
+    padding: 40px;        /* Más espacio en pantallas grandes */
+  }
+
+  .bloque-app {
+    flex: 1;              /* Hace que ambos bloques midan exactamente lo mismo a lo ancho */
+  }
+}

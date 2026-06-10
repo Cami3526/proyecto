@@ -19,42 +19,48 @@
     </script>
 
     <script>
-        // CREDENCIALES OFICIALES DE LATENTE (UNIFICADAS)
         const SUPABASE_URL = "https://aypexczsibphswwvyhwr.supabase.co"; 
         const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImF5cGV4Y3pzaWJwaHN3d3Z5aHdyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk5ODQ3MzIsImV4cCI6MjA5NTU2MDczMn0.-Dyvg3BJfIz8P49qE5EW9pilfToCcE2NjHu4KML3yeM";
         
         const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-        // Comprobar la sesión de inmediato antes de pintar nada
-        async function verificarSesion() {
-            try {
-                const { data: { session } } = await supabaseClient.auth.getSession();
-                if (!session) {
-                    window.location.href = 'login.html';
-                }
-            } catch (error) {
-                console.error("Error validando sesión:", error);
-                window.location.href = 'login.html';
-            }
-        }
-        verificarSesion();
+      async function verificarSesion() {
+            try {
+                const { data: { session } } = await supabaseClient.auth.getSession();
+                if (!session) {
+                    window.location.href = 'login.html';
+                }
+            } catch (error) {
+                console.error("Error validando sesión:", error);
+                window.location.href = 'login.html';
+            }
+        }
+         verificarSesion();
+    </script>
     </script>
 </head>
 <body class="min-h-screen bg-zinc-950 text-white p-8 font-sans">
 
     <div class="max-w-6xl mx-auto">
         
+        <!-- ENCABEZADO CON ENLACES CONECTADOS -->
         <div class="flex justify-between items-center mb-10 border-b border-zinc-800 pb-6">
             <div>
                 <span class="text-xs font-semibold tracking-widest text-amber-400 uppercase">Control de Operaciones</span>
                 <h1 class="text-3xl font-bold tracking-wide mt-1">Monitoreo de Aseo y Llaves</h1>
                 <p class="text-zinc-400 text-sm mt-1">Asigna tareas directamente al WhatsApp de tu equipo de trabajo.</p>
             </div>
-            <a href="index.html" target="_blank" class="bg-zinc-800 hover:bg-zinc-700 border border-zinc-700 px-4 py-2 rounded-xl text-sm font-medium transition-all">
-                Ver Formulario de Registro
-            </a>
+            <div class="flex gap-3">
+                <a href="dashboard.html" class="bg-zinc-800 hover:bg-zinc-700 border border-zinc-700 px-4 py-2 rounded-xl text-sm font-medium transition-all">
+                    📋 Ver Dashboard Oscuro
+                </a>
+                <a href="index.html" class="bg-amber-600 hover:bg-amber-500 text-zinc-950 px-4 py-2 rounded-xl text-sm font-bold transition-all">
+                    + Nuevo Registro
+                </a>
+            </div>
         </div>
 
+        <!-- CONTENEDOR DE TARJETAS -->
         <div id="contenedorHosteles" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             <div id="mensajeCarga" class="col-span-full text-center py-12 text-zinc-500 animate-pulse text-sm">
                 Sincronizando propiedades con la nube...
@@ -62,24 +68,12 @@
         </div>
 
     </div>
-
     <script>
-        // CONFIGURA TU PERSONAL AQUÍ (Números reales de tu equipo con código de país)
-        const EQUIPO_ASEO = [
-            { nombre: "Camilo (Limpieza)", telefono: "573112905114" },
-            { nombre: "Lucía (Limpieza)", telefono: "573119876543" }
-        ];
-
-        const EQUIPO_LLAVES = [
-            { nombre: "Camilo (Logística)", telefono: "573112905114" },
-            { nombre: "Andrés (Logística)", telefono: "573204445566" }
-        ];
-
-        async function cargarPanel() {
+        // Función principal para cargar y pintar las tarjetas desde Supabase
+        async function cargarPropiedades() {
             const contenedor = document.getElementById('contenedorHosteles');
-
+            
             try {
-                // Modificado para usar la librería oficial cliente y saltar seguridad RLS
                 const { data: hosteles, error } = await supabaseClient
                     .from('hosteles')
                     .select('*')
@@ -87,161 +81,167 @@
 
                 if (error) throw error;
 
-                contenedor.innerHTML = "";
-
                 if (!hosteles || hosteles.length === 0) {
-                    contenedor.innerHTML = `<p class="col-span-full text-center text-zinc-500 text-sm">No hay propiedades registradas.</p>`;
+                    contenedor.innerHTML = `
+                        <div class="col-span-full text-center py-12 text-zinc-500 text-sm border border-dashed border-zinc-800 rounded-2xl">
+                            No se encontraron propiedades registradas.
+                        </div>`;
                     return;
                 }
 
+                contenedor.innerHTML = '';
+
                 hosteles.forEach(hostel => {
-                    const tarjeta = document.createElement('div');
-                    tarjeta.className = "bg-zinc-900 border border-zinc-800 rounded-2xl p-6 shadow-xl hover:border-zinc-700 transition-all flex flex-col justify-between";
+                    const card = document.createElement('div');
+                    card.className = "bg-zinc-900 border border-zinc-800 rounded-2xl p-6 shadow-xl relative overflow-hidden flex flex-col justify-between";
                     
-                    // COLORES DINÁMICOS PARA BADGES
-                    let colorAseo = hostel.estado_aseo === 'Sucio' ? 'text-red-400 bg-red-500/10 border-red-500/20' : 
-                                    hostel.estado_aseo === 'En Proceso' ? 'text-amber-400 bg-amber-500/10 border-amber-500/20' : 
-                                    'text-green-400 bg-green-500/10 border-green-500/20';
+                    // Normalizar estados para evitar errores de coincidencia visual
+                    const aseo = (hostel.estado_aseo || 'LIMPIO').toUpperCase();
+                    const llaves = (hostel.estado_llaves || 'EN OFICINA').toUpperCase();
+                    const admin = (hostel.tipo_administracion || 'POR DEFINIR').toUpperCase();
 
-                    let colorLlaves = hostel.estado_llaves === 'Con Huésped' ? 'text-amber-400 bg-amber-500/10 border-amber-500/20' : 
-                                      hostel.estado_llaves === 'Entregadas Aseo' ? 'text-blue-400 bg-blue-500/10 border-blue-500/20' :
-                                      hostel.estado_llaves === 'Recibidas Aseo' ? 'text-indigo-400 bg-indigo-500/10 border-indigo-500/20' :
-                                      'text-green-400 bg-green-500/10 border-green-500/20';
-
-                    // CLASES PARA BOTONES ACTIVOS/INACTIVOS DE ASEO
-                    let btnSucioClass = hostel.estado_aseo === 'Sucio' ? 'bg-red-950/60 text-red-400 border-red-500/50' : 'bg-zinc-800 text-zinc-400 border-zinc-700 hover:text-zinc-200';
-                    let btnProcesoClass = hostel.estado_aseo === 'En Proceso' ? 'bg-amber-950/60 text-amber-400 border-amber-500/50' : 'bg-zinc-800 text-zinc-400 border-zinc-700 hover:text-zinc-200';
-                    let btnLimpioClass = hostel.estado_aseo === 'Limpio' || !hostel.estado_aseo ? 'bg-green-950/60 text-green-400 border-green-500/50' : 'bg-zinc-800 text-zinc-400 border-zinc-700 hover:text-zinc-200';
-
-                    // CLASES PARA BOTONES ACTIVOS/INACTIVOS DE LLAVES
-                    let btnHuesped = hostel.estado_llaves === 'Con Huésped' ? 'bg-amber-950/60 text-amber-400 border-amber-500/50' : 'bg-zinc-800 text-zinc-400 border-zinc-700 hover:text-zinc-200';
-                    let btnRecibidasH = hostel.estado_llaves === 'En Oficina' || !hostel.estado_llaves ? 'bg-green-950/60 text-green-400 border-green-500/50' : 'bg-zinc-800 text-zinc-400 border-zinc-700 hover:text-zinc-200';
-                    let btnEntregadasAseo = hostel.estado_llaves === 'Entregadas Aseo' ? 'bg-blue-950/60 text-blue-400 border-blue-500/50' : 'bg-zinc-800 text-zinc-400 border-zinc-700 hover:text-zinc-200';
-                    let btnRecibidasAseo = hostel.estado_llaves === 'Recibidas Aseo' ? 'bg-indigo-950/60 text-indigo-400 border-indigo-500/50' : 'bg-zinc-800 text-zinc-400 border-zinc-700 hover:text-zinc-200';
-
-                    let opcionesAseo = EQUIPO_ASEO.map(p => `<option value="${p.telefono}">${p.nombre}</option>`).join('');
-                    let opcionesLlaves = EQUIPO_LLAVES.map(p => `<option value="${p.telefono}">${p.nombre}</option>`).join('');
-
-                    tarjeta.innerHTML = `
+                    card.innerHTML = `
                         <div>
-                            <div class="flex justify-between items-start mb-2">
+                            <div class="flex justify-between items-start mb-4">
                                 <div>
-                                    <h3 class="text-lg font-semibold text-white">${hostel.nombre || 'Sin Nombre'}</h3>
-                                    <p class="text-xs text-zinc-400">📍 ${hostel.ubicacion || 'Sin Dirección'}</p>
+                                    <h3 class="text-lg font-bold text-zinc-100 tracking-wide">${hostel.nombre || 'Sin Nombre'}</h3>
+                                    <p class="text-xs text-amber-500 font-medium mt-0.5">📍 ${hostel.ubicacion || 'Sin ubicación'}</p>
                                 </div>
-                                <span class="text-xs font-mono font-bold text-zinc-600 bg-zinc-800 px-2 py-1 rounded">ID: ${hostel.id}</span>
+                                <span class="text-xs font-mono font-bold text-zinc-600 bg-zinc-950 border border-zinc-800 px-2 py-0.5 rounded">ID: ${hostel.id}</span>
                             </div>
-
-                            <hr class="border-zinc-800 my-4">
-
-                            <div class="mb-4">
-                                <label class="block text-[11px] uppercase tracking-wider text-zinc-500 mb-1 font-medium">Asignar Personal de Aseo</label>
-                                <div class="flex gap-2">
-                                    <select id="selectAseo-${hostel.id}" class="flex-1 bg-zinc-950 border border-zinc-800 rounded-lg p-2 text-xs text-zinc-300 focus:outline-none focus:border-amber-500">
-                                        ${opcionesAseo}
+                            
+                            <p class="text-xs text-zinc-400 mb-6">📞 Teléfono Propiedad: ${hostel.telefono || 'No registrado'}</p>
+                            
+                            <!-- SELECTORES DE ESTADO DIRECTOS A LA BD -->
+                            <div class="space-y-4 border-t border-zinc-800/60 pt-4 mb-6">
+                                <div>
+                                    <label class="block text-[11px] font-bold tracking-wider text-zinc-500 uppercase mb-1.5">Control de Aseo</label>
+                                    <select onchange="actualizarEstado(${hostel.id}, 'estado_aseo', this.value)" 
+                                        class="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-3 py-2 text-xs font-medium text-zinc-300 focus:outline-none focus:border-amber-500 transition-all">
+                                        <option value="SUCIO" ${aseo === 'SUCIO' ? 'selected' : ''}>❌ SUCIO</option>
+                                        <option value="EN PROCESO" ${aseo === 'EN PROCESO' ? 'selected' : ''}>⏳ EN PROCESO</option>
+                                        <option value="LIMPIO" ${aseo === 'LIMPIO' ? 'selected' : ''}>✨ LIMPIO</option>
                                     </select>
-                                    <button onclick="enviarWhatsAppPersonal('estado_aseo', '${hostel.estado_aseo || 'Limpio'}', document.getElementById('selectAseo-${hostel.id}').value, '${hostel.nombre}')" class="bg-[#25D366] hover:bg-[#20ba56] text-zinc-950 font-bold p-2.5 rounded-lg transition-all flex items-center justify-center gap-1 shadow-lg shadow-emerald-950/25" title="Enviar WhatsApp">
-                                        <svg class="w-4 h-4 fill-current" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                                            <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946C.06 5.348 5.397.01 12.008.01c3.202.001 6.212 1.246 8.477 3.513 2.266 2.268 3.507 5.28 3.505 8.484-.004 6.657-5.34 11.997-11.953 11.997-2.005-.001-3.973-.502-5.713-1.457L0 24zm6.59-4.846c1.66.986 3.288 1.488 4.605 1.489 5.425.002 9.832-4.386 9.835-9.81.002-2.628-1.023-5.1-2.885-6.963C16.28 1.945 13.803.921 11.179.921c-5.43 0-9.84 4.393-9.843 9.817a9.75 9.75 0 0 0 1.458 4.542l-1.025 3.744 3.845-.989zm12.39-4.572c-.22-.11-1.298-.64-1.5-.714-.201-.074-.347-.11-.494.11-.146.221-.567.714-.694.86-.127.145-.255.163-.475.052-.221-.11-.932-.343-1.777-1.096-.657-.587-1.101-1.312-1.23-1.531-.13-.22-.013-.339.097-.449.1-.1.22-.256.33-.384.11-.127.147-.219.22-.365.074-.146.037-.274-.018-.384-.056-.11-.494-1.192-.677-1.636-.178-.43-.36-.37-.494-.377-.127-.007-.274-.007-.42-.007-.147 0-.385.055-.587.274-.201.221-.768.75-1.015 1.512-.247.763-.09 1.636.019 1.782.11.146 1.492 2.28 3.615 3.193.504.217.898.347 1.205.445.508.162.97.139 1.336.084.407-.061 1.297-.53 1.48-1.036.182-.505.182-.939.127-1.03-.055-.092-.201-.146-.421-.256z"/>
-                                        </svg>
-                                    </button>
                                 </div>
-                            </div>
 
-                            <div class="mb-6">
-                                <div class="flex justify-between items-center mb-2">
-                                    <span class="text-xs font-medium text-zinc-400">Estado Aseo</span>
-                                    <span class="text-xs px-2.5 py-0.5 rounded-full font-medium border ${colorAseo}">${hostel.estado_aseo || 'Limpio'}</span>
-                                </div>
-                                <div class="grid grid-cols-3 gap-2">
-                                    <button onclick="procesarAccion(${hostel.id}, 'estado_aseo', 'Sucio')" class="border text-xs py-1.5 rounded-lg transition-all ${btnSucioClass}">Requiere</button>
-                                    <button onclick="procesarAccion(${hostel.id}, 'estado_aseo', 'En Proceso')" class="border text-xs py-1.5 rounded-lg transition-all ${btnProcesoClass}">En Proceso</button>
-                                    <button onclick="procesarAccion(${hostel.id}, 'estado_aseo', 'Limpio')" class="border text-xs py-1.5 rounded-lg transition-all ${btnLimpioClass}">Terminado</button>
-                                </div>
-                            </div>
-
-                            <div class="mb-4">
-                                <label class="block text-[11px] uppercase tracking-wider text-zinc-500 mb-1 font-medium">Asignar Encargado de Llaves</label>
-                                <div class="flex gap-2">
-                                    <select id="selectLlaves-${hostel.id}" class="flex-1 bg-zinc-950 border border-zinc-800 rounded-lg p-2 text-xs text-zinc-300 focus:outline-none focus:border-blue-500">
-                                        ${opcionesLlaves}
+                                <div>
+                                    <label class="block text-[11px] font-bold tracking-wider text-zinc-500 uppercase mb-1.5">Control de Llaves</label>
+                                    <select onchange="actualizarEstado(${hostel.id}, 'estado_llaves', this.value)" 
+                                        class="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-3 py-2 text-xs font-medium text-zinc-300 focus:outline-none focus:border-amber-500 transition-all">
+                                        <option value="EN OFICINA" ${llaves === 'EN OFICINA' ? 'selected' : ''}>🏢 EN OFICINA</option>
+                                        <option value="CON HUÉSPED" ${llaves === 'CON HUÉSPED' || llaves === 'CON HUESPED' ? 'selected' : ''}>🔑 CON HUÉSPED</option>
+                                        <option value="ENTREGADAS ASEO" ${llaves === 'ENTREGADAS ASEO' ? 'selected' : ''}>🧹 ENTREGADAS ASEO</option>
+                                        <option value="RECIBIDAS ASEO" ${llaves === 'RECIBIDAS ASEO' ? 'selected' : ''}>📥 RECIBIDAS ASEO</option>
                                     </select>
-                                    <button onclick="enviarWhatsAppPersonal('estado_llaves', '${hostel.estado_llaves || 'En Oficina'}', document.getElementById('selectLlaves-${hostel.id}').value, '${hostel.nombre}')" class="bg-[#25D366] hover:bg-[#20ba56] text-zinc-950 font-bold p-2.5 rounded-lg transition-all flex items-center justify-center gap-1 shadow-lg shadow-emerald-950/25" title="Enviar WhatsApp">
-                                        <svg class="w-4 h-4 fill-current" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                                            <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946C.06 5.348 5.397.01 12.008.01c3.202.001 6.212 1.246 8.477 3.513 2.266 2.268 3.507 5.28 3.505 8.484-.004 6.657-5.34 11.997-11.953 11.997-2.005-.001-3.973-.502-5.713-1.457L0 24zm6.59-4.846c1.66.986 3.288 1.488 4.605 1.489 5.425.002 9.832-4.386 9.835-9.81.002-2.628-1.023-5.1-2.885-6.963C16.28 1.945 13.803.921 11.179.921c-5.43 0-9.84 4.393-9.843 9.817a9.75 9.75 0 0 0 1.458 4.542l-1.025 3.744 3.845-.989zm12.39-4.572c-.22-.11-1.298-.64-1.5-.714-.201-.074-.347-.11-.494.11-.146.221-.567.714-.694.86-.127.145-.255.163-.475.052-.221-.11-.932-.343-1.777-1.096-.657-.587-1.101-1.312-1.23-1.531-.13-.22-.013-.339.097-.449.1-.1.22-.256.33-.384.11-.127.147-.219.22-.365.074-.146.037-.274-.018-.384-.056-.11-.494-1.192-.677-1.636-.178-.43-.36-.37-.494-.377-.127-.007-.274-.007-.42-.007-.147 0-.385.055-.587.274-.201.221-.768.75-1.015 1.512-.247.763-.09 1.636.019 1.782.11.146 1.492 2.28 3.615 3.193.504.217.898.347 1.205.445.508.162.97.139 1.336.084.407-.061 1.297-.53 1.48-1.036.182-.505.182-.939.127-1.03-.055-.092-.201-.146-.421-.256z"/>
-                                        </svg>
-                                    </button>
                                 </div>
-                            </div>
 
-                            <div>
-                                <div class="flex justify-between items-center mb-2">
-                                    <span class="text-xs font-medium text-zinc-400">Estado Llaves</span>
-                                    <span class="text-xs px-2.5 py-0.5 rounded-full font-medium border ${colorLlaves}">
-                                        ${hostel.estado_llaves === 'Con Huésped' ? 'Huésped' : hostel.estado_llaves === 'Entregadas Aseo' ? 'Personal Aseo' : hostel.estado_llaves === 'Recibidas Aseo' ? 'Recibidas Aseo' : 'En Oficina'}
-                                    </span>
-                                </div>
-                                <div class="grid grid-cols-2 gap-2">
-                                    <button onclick="procesarAccion(${hostel.id}, 'estado_llaves', 'Con Huésped')" class="border text-[10px] py-2 rounded-lg transition-all font-medium overflow-hidden text-center truncate ${btnHuesped}">🔑 A Huésped</button>
-                                    <button onclick="procesarAccion(${hostel.id}, 'estado_llaves', 'En Oficina')" class="border text-[10px] py-2 rounded-lg transition-all font-medium overflow-hidden text-center truncate ${btnRecibidasH}">🏠 De Huésped</button>
-                                    <button onclick="procesarAccion(${hostel.id}, 'estado_llaves', 'Entregadas Aseo')" class="border text-[10px] py-2 rounded-lg transition-all font-medium overflow-hidden text-center truncate ${btnEntregadasAseo}">🧹 A Aseo</button>
-                                    <button onclick="procesarAccion(${hostel.id}, 'estado_llaves', 'Recibidas Aseo')" class="border text-[10px] py-2 rounded-lg transition-all font-medium overflow-hidden text-center truncate ${btnRecibidasAseo}">📥 De Aseo</button>
+                                <div>
+                                    <label class="block text-[11px] font-bold tracking-wider text-zinc-500 uppercase mb-1.5">Esquema Administrativo</label>
+                                    <select onchange="actualizarEstado(${hostel.id}, 'tipo_administracion', this.value)" 
+                                        class="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-3 py-2 text-xs font-medium text-zinc-300 focus:outline-none focus:border-amber-500 transition-all">
+                                        <option value="POR DEFINIR" ${admin === 'POR DEFINIR' ? 'selected' : ''}>❓ POR DEFINIR</option>
+                                        <option value="COANFITRIONA" ${admin === 'COANFITRIONA' ? 'selected' : ''}>🤝 COANFITRIONA</option>
+                                        <option value="SOLO ASEO" ${admin === 'SOLO ASEO' ? 'selected' : ''}>🧹 SOLO ASEO</option>
+                                    </select>
                                 </div>
                             </div>
                         </div>
+
+                        <!-- PANEL DE ASIGNACIÓN: RECUPERADOS LOS CAMPOS CLAVE -->
+                        <div class="border-t border-zinc-800/60 pt-4 space-y-2">
+                            <label class="block text-[10px] font-bold tracking-wider text-amber-500 uppercase">Asignar Responsable</label>
+                            
+                            <div class="grid grid-cols-2 gap-2">
+                                <input type="text" id="nombreOp-${hostel.id}" placeholder="Nombre (Ej. Camilo)" 
+                                    class="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-2.5 py-2 text-xs text-zinc-300 placeholder-zinc-600 focus:outline-none focus:border-amber-500 transition-all">
+                                
+                                <input type="tel" id="celularOp-${hostel.id}" placeholder="Celular (Ej. 57311...)" 
+                                    class="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-2.5 py-2 text-xs text-zinc-300 placeholder-zinc-600 focus:outline-none focus:border-amber-500 transition-all">
+                            </div>
+                            
+                            <div class="grid grid-cols-2 gap-2 pt-1">
+                                <button onclick="enviarWhatsApp(${hostel.id}, '${hostel.nombre}', 'aseo')" 
+                                    class="bg-emerald-600 hover:bg-emerald-500 text-zinc-950 py-2 px-3 rounded-xl text-[11px] font-bold transition-all flex items-center justify-center gap-1">
+                                    🟢 Mandar Aseo
+                                </button>
+                                <button onclick="enviarWhatsApp(${hostel.id}, '${hostel.nombre}', 'llaves')" 
+                                    class="bg-zinc-800 hover:bg-zinc-700 border border-zinc-700 text-zinc-200 py-2 px-3 rounded-xl text-[11px] font-bold transition-all flex items-center justify-center gap-1">
+                                    🔑 Mandar Llaves
+                                </button>
+                            </div>
+                        </div>
                     `;
-                    contenedor.appendChild(tarjeta);
+                    contenedor.appendChild(card);
                 });
-            } catch (error) {
-                console.error("Error cargando panel admin:", error);
+
+            } catch (err) {
+                console.error("Error al renderizar panel:", err);
+                contenedor.innerHTML = `<div class="col-span-full text-center py-12 text-red-500 text-sm">Error de sincronización de datos.</div>`;
             }
         }
-
-        async function procesarAccion(id, columna, nuevoValor) {
+        // Función para inyectar los cambios de estado en tiempo real en Supabase
+        async function actualizarEstado(idHostel, columna, nuevoValor) {
             try {
-                // Actualización limpia usando el SDK oficial de Supabase
-                const { error } = await supabaseClient
+                const datosActualizados = {};
+                datosActualizados[columna] = nuevoValor;
+
+                const { data, error } = await supabaseClient
                     .from('hosteles')
-                    .update({ [columna]: nuevoValor })
-                    .eq('id', id);
+                    .update(datosActualizados)
+                    .eq('id', idHostel);
 
-                if (error) throw error;
-                
-                cargarPanel(); // Recarga visual instantánea sin refrescar pestaña
-
-            } catch (error) {
-                alert("Error actualizando estado: " + error.message);
+                if (error) {
+                    console.error(`Error guardando en la columna ${columna}:`, error);
+                    alert("No se pudo registrar la actualización en la nube.");
+                } else {
+                    console.log(`¡Columna ${columna} sincronizada con éxito a: ${nuevoValor}!`);
+                }
+            } catch (err) {
+                console.error("Fallo crítico en la solicitud de cambio:", err);
             }
         }
-
-        function enviarWhatsAppPersonal(tipoServicio, estado, telefono, nombreHostel) {
-            let mensaje = "";
-
-            if (tipoServicio === 'estado_aseo') {
-                if (estado === 'Sucio') {
-                    mensaje = `🛑 *NUEVA TAREA ASIGNADA - GESTIÓN DE ASEO*\n\nHola, tienes asignado un servicio de *Aseo Profundo* urgente.\n\n🏨 Propiedad: *${nombreHostel}*\n📌 Por favor, repórtame por este medio apenas inicies la labor.`;
-                } else if (estado === 'En Proceso') {
-                    mensaje = `⏳ *SEGUIMIENTO DE ASEO*\n\nHola, confirmo que tu tarea en la propiedad *${nombreHostel}* figura registrada como *En Proceso*.`;
-                } else if (estado === 'Limpio') {
-                    mensaje = `✅ *CONFORMIDAD DE ASEO*\n\nMuchas gracias. El aseo de la propiedad *${nombreHostel}* ha sido verificado como *Terminado y Conforme*. Buen trabajo! ✨`;
-                }
-            } else if (tipoServicio === 'estado_llaves') {
-                if (estado === 'Con Huésped') {
-                    mensaje = `🔑 *LOGÍSTICA DE LLAVES*\n\nHola, se registra que las llaves de la propiedad *${nombreHostel}* han sido *Entregadas al Huésped*.`;
-                } else if (estado === 'En Oficina') {
-                    mensaje = `🏠 *RETORNO DE LLAVES*\n\nHola, las llaves de la propiedad *${nombreHostel}* están de vuelta en la *Oficina Principal*.`;
-                } else if (estado === 'Entregadas Aseo') {
-                    mensaje = `🧹 *LLAVES A PERSONAL DE ASEO*\n\nHola, las llaves de la propiedad *${nombreHostel}* se han entregado al *Personal de Aseo* para iniciar labores.`;
-                } else if (estado === 'Recibidas Aseo') {
-                    mensaje = `📥 *LLAVES RECIBIDAS DE ASEO*\n\nHola, se confirma la recepción de las llaves devueltas por el equipo de aseo de la propiedad *${nombreHostel}*.`;
-                }
+        // CONTINUACIÓN DE ADMIN.HTML - PARTE 4 DE 5
+        // Función corregida para capturar el nombre y el celular del operario asignado
+        function enviarWhatsApp(idHostel, nombreHostel, tipoMensaje) {
+            const inputNombre = document.getElementById(`nombreOp-${idHostel}`);
+            const inputCelular = document.getElementById(`celularOp-${idHostel}`);
+            
+            const nombreOperario = inputNombre ? inputNombre.value.trim() : "";
+            let celularOperario = inputCelular ? inputCelular.value.trim() : "";
+            
+            if (!nombreOperario || !celularOperario) {
+                alert("Por favor, ingresa el Nombre y el Celular del operario antes de enviar.");
+                return;
             }
 
-            const enlace = `https://wa.me/${telefono}?text=${encodeURIComponent(mensaje)}`;
-            window.open(enlace, '_blank');
+            // Quitar espacios o símbolos extraños del número para que WhatsApp no falle
+            celularOperario = celularOperario.replace(/\s+/g, '').replace('+', '');
+
+            let textoMsg = "";
+            if (tipoMensaje === 'aseo') {
+                textoMsg = `🧹 *LATENTE OPS - ASIGNACIÓN DE ASEO*\n\nHola *${nombreOperario}*,\nSe te ha asignado el servicio de limpieza para la propiedad:\n🏨 *${nombreHostel}*\n\nPor favor, confírmame cuando vayas en camino. ¡Muchas gracias!`;
+            } else {
+                textoMsg = `🔑 *LATENTE OPS - CONTROL DE LLAVES*\n\nHola *${nombreOperario}*,\nEstás a cargo de la gestión de llaves para la propiedad:\n🏨 *${nombreHostel}*\n\nPor favor, mantén el estado actualizado en el sistema.`;
+            }
+            // 1. APERTURA REAL DE LA VENTANA DE WHATSAPP
+            // Codificamos el texto de forma segura para que los caracteres especiales, 
+            // emojis y saltos de línea funcionen perfectamente en la URL de WhatsApp.
+            const urlWhatsApp = `https://wa.me/${celularOperario}?text=${encodeURIComponent(textoMsg)}`;
+            
+            // Abrimos WhatsApp en una nueva pestaña del navegador sin interrumpir el panel de administración
+            window.open(urlWhatsApp, '_blank');
         }
 
-        document.addEventListener('DOMContentLoaded', cargarPanel);
+        // 2. DISPARADOR INICIAL AL CARGAR LA PÁGINA
+        // Escuchamos el evento de que el HTML está listo para mandar a traer 
+        // de inmediato todas las propiedades almacenadas en Supabase.
+        document.addEventListener('DOMContentLoaded', () => {
+            // Aquí se ejecuta tu función principal que limpia el contenedor y renderiza las tarjetas
+            cargarPropiedadesSupabase(); 
+        });
+    // CIERRES OBLIGATORIOS DE ETIQUETAS DEL ARCHIVO
+    // Agrega esto al final del todo para que cargue automáticamente
+document.addEventListener("DOMContentLoaded", cargarPropiedades);
     </script>
 </body>
 </html>
