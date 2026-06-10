@@ -24,31 +24,29 @@
         
         const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-      async function verificarSesion() {
-            try {
-                const { data: { session } } = await supabaseClient.auth.getSession();
-                if (!session) {
-                    window.location.href = 'login.html';
-                }
-            } catch (error) {
-                console.error("Error validando sesión:", error);
-                window.location.href = 'login.html';
-            }
-        }
-         verificarSesion();
-    </script>
+        async function verificarSesion() {
+            try {
+                const { data: { session } } = await supabaseClient.auth.getSession();
+                if (!session) {
+                    window.location.href = 'login.html';
+                }
+            } catch (error) {
+                console.error("Error validando sesión:", error);
+                window.location.href = 'login.html';
+            }
+        }
+        verificarSesion();
     </script>
 </head>
 <body class="min-h-screen bg-zinc-950 text-white p-8 font-sans">
 
     <div class="max-w-6xl mx-auto">
         
-        <!-- ENCABEZADO CON ENLACES CONECTADOS -->
         <div class="flex justify-between items-center mb-10 border-b border-zinc-800 pb-6">
             <div>
                 <span class="text-xs font-semibold tracking-widest text-amber-400 uppercase">Control de Operaciones</span>
-                <h1 class="text-3xl font-bold tracking-wide mt-1">Monitoreo de Aseo y Llaves</h1>
-                <p class="text-zinc-400 text-sm mt-1">Asigna tareas directamente al WhatsApp de tu equipo de trabajo.</p>
+                <h1 class="text-3xl font-bold tracking-wide mt-1">Monitoreo de Oficios</h1>
+                <p class="text-zinc-400 text-sm mt-1">Asigna tareas de aseo, llaves y jardinería directamente al WhatsApp de tu equipo.</p>
             </div>
             <div class="flex gap-3">
                 <a href="dashboard.html" class="bg-zinc-800 hover:bg-zinc-700 border border-zinc-700 px-4 py-2 rounded-xl text-sm font-medium transition-all">
@@ -60,7 +58,6 @@
             </div>
         </div>
 
-        <!-- CONTENEDOR DE TARJETAS -->
         <div id="contenedorHosteles" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             <div id="mensajeCarga" class="col-span-full text-center py-12 text-zinc-500 animate-pulse text-sm">
                 Sincronizando propiedades con la nube...
@@ -68,6 +65,7 @@
         </div>
 
     </div>
+
     <script>
         // Función principal para cargar y pintar las tarjetas desde Supabase
         async function cargarPropiedades() {
@@ -98,6 +96,7 @@
                     // Normalizar estados para evitar errores de coincidencia visual
                     const aseo = (hostel.estado_aseo || 'LIMPIO').toUpperCase();
                     const llaves = (hostel.estado_llaves || 'EN OFICINA').toUpperCase();
+                    const jardineria = (hostel.estado_jardineria || 'MANTENIDO').toUpperCase();
                     const admin = (hostel.tipo_administracion || 'POR DEFINIR').toUpperCase();
 
                     card.innerHTML = `
@@ -112,7 +111,6 @@
                             
                             <p class="text-xs text-zinc-400 mb-6">📞 Teléfono Propiedad: ${hostel.telefono || 'No registrado'}</p>
                             
-                            <!-- SELECTORES DE ESTADO DIRECTOS A LA BD -->
                             <div class="space-y-4 border-t border-zinc-800/60 pt-4 mb-6">
                                 <div>
                                     <label class="block text-[11px] font-bold tracking-wider text-zinc-500 uppercase mb-1.5">Control de Aseo</label>
@@ -136,6 +134,16 @@
                                 </div>
 
                                 <div>
+                                    <label class="block text-[11px] font-bold tracking-wider text-zinc-500 uppercase mb-1.5">Control de Jardinería</label>
+                                    <select onchange="actualizarEstado(${hostel.id}, 'estado_jardineria', this.value)" 
+                                        class="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-3 py-2 text-xs font-medium text-zinc-300 focus:outline-none focus:border-amber-500 transition-all">
+                                        <option value="REQUERIDO" ${jardineria === 'REQUERIDO' ? 'selected' : ''}>🍂 REQUERIDO</option>
+                                        <option value="EN PROCESO" ${jardineria === 'EN PROCESO' ? 'selected' : ''}>⏳ EN PROCESO</option>
+                                        <option value="MANTENIDO" ${jardineria === 'MANTENIDO' ? 'selected' : ''}>🌿 MANTENIDO</option>
+                                    </select>
+                                </div>
+
+                                <div>
                                     <label class="block text-[11px] font-bold tracking-wider text-zinc-500 uppercase mb-1.5">Esquema Administrativo</label>
                                     <select onchange="actualizarEstado(${hostel.id}, 'tipo_administracion', this.value)" 
                                         class="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-3 py-2 text-xs font-medium text-zinc-300 focus:outline-none focus:border-amber-500 transition-all">
@@ -147,26 +155,31 @@
                             </div>
                         </div>
 
-                        <!-- PANEL DE ASIGNACIÓN: RECUPERADOS LOS CAMPOS CLAVE -->
                         <div class="border-t border-zinc-800/60 pt-4 space-y-2">
                             <label class="block text-[10px] font-bold tracking-wider text-amber-500 uppercase">Asignar Responsable</label>
                             
                             <div class="grid grid-cols-2 gap-2">
-                                <input type="text" id="nombreOp-${hostel.id}" placeholder="Nombre (Ej. Camilo)" 
+                                <input type="text" id="nombreOp-${hostel.id}" placeholder="Nombre (Ej. Juan)" 
                                     class="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-2.5 py-2 text-xs text-zinc-300 placeholder-zinc-600 focus:outline-none focus:border-amber-500 transition-all">
                                 
                                 <input type="tel" id="celularOp-${hostel.id}" placeholder="Celular (Ej. 57311...)" 
                                     class="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-2.5 py-2 text-xs text-zinc-300 placeholder-zinc-600 focus:outline-none focus:border-amber-500 transition-all">
                             </div>
                             
-                            <div class="grid grid-cols-2 gap-2 pt-1">
-                                <button onclick="enviarWhatsApp(${hostel.id}, '${hostel.nombre}', 'aseo')" 
-                                    class="bg-emerald-600 hover:bg-emerald-500 text-zinc-950 py-2 px-3 rounded-xl text-[11px] font-bold transition-all flex items-center justify-center gap-1">
-                                    🟢 Mandar Aseo
-                                </button>
-                                <button onclick="enviarWhatsApp(${hostel.id}, '${hostel.nombre}', 'llaves')" 
-                                    class="bg-zinc-800 hover:bg-zinc-700 border border-zinc-700 text-zinc-200 py-2 px-3 rounded-xl text-[11px] font-bold transition-all flex items-center justify-center gap-1">
-                                    🔑 Mandar Llaves
+                            <div class="flex flex-col gap-2 pt-1">
+                                <div class="grid grid-cols-2 gap-2">
+                                    <button onclick="enviarWhatsApp(${hostel.id}, '${hostel.nombre}', 'aseo')" 
+                                        class="bg-emerald-600 hover:bg-emerald-500 text-zinc-950 py-2 px-3 rounded-xl text-[11px] font-bold transition-all flex items-center justify-center gap-1">
+                                        🟢 Mandar Aseo
+                                    </button>
+                                    <button onclick="enviarWhatsApp(${hostel.id}, '${hostel.nombre}', 'llaves')" 
+                                        class="bg-zinc-800 hover:bg-zinc-700 border border-zinc-700 text-zinc-200 py-2 px-3 rounded-xl text-[11px] font-bold transition-all flex items-center justify-center gap-1">
+                                        🔑 Mandar Llaves
+                                    </button>
+                                </div>
+                                <button onclick="enviarWhatsApp(${hostel.id}, '${hostel.nombre}', 'jardineria')" 
+                                    class="bg-amber-600 hover:bg-amber-500 text-zinc-950 py-2 px-3 rounded-xl text-[11px] font-bold transition-all flex items-center justify-center gap-1 w-full">
+                                    🌿 Mandar Jardinería
                                 </button>
                             </div>
                         </div>
@@ -179,6 +192,7 @@
                 contenedor.innerHTML = `<div class="col-span-full text-center py-12 text-red-500 text-sm">Error de sincronización de datos.</div>`;
             }
         }
+
         // Función para inyectar los cambios de estado en tiempo real en Supabase
         async function actualizarEstado(idHostel, columna, nuevoValor) {
             try {
@@ -200,8 +214,8 @@
                 console.error("Fallo crítico en la solicitud de cambio:", err);
             }
         }
-        // CONTINUACIÓN DE ADMIN.HTML - PARTE 4 DE 5
-        // Función corregida para capturar el nombre y el celular del operario asignado
+
+        // Función para despachar los mensajes personalizados de WhatsApp
         function enviarWhatsApp(idHostel, nombreHostel, tipoMensaje) {
             const inputNombre = document.getElementById(`nombreOp-${idHostel}`);
             const inputCelular = document.getElementById(`celularOp-${idHostel}`);
@@ -214,34 +228,24 @@
                 return;
             }
 
-            // Quitar espacios o símbolos extraños del número para que WhatsApp no falle
             celularOperario = celularOperario.replace(/\s+/g, '').replace('+', '');
 
             let textoMsg = "";
             if (tipoMensaje === 'aseo') {
                 textoMsg = `🧹 *LATENTE OPS - ASIGNACIÓN DE ASEO*\n\nHola *${nombreOperario}*,\nSe te ha asignado el servicio de limpieza para la propiedad:\n🏨 *${nombreHostel}*\n\nPor favor, confírmame cuando vayas en camino. ¡Muchas gracias!`;
-            } else {
+            } else if (tipoMensaje === 'llaves') {
                 textoMsg = `🔑 *LATENTE OPS - CONTROL DE LLAVES*\n\nHola *${nombreOperario}*,\nEstás a cargo de la gestión de llaves para la propiedad:\n🏨 *${nombreHostel}*\n\nPor favor, mantén el estado actualizado en el sistema.`;
+            } else if (tipoMensaje === 'jardineria') {
+                // Mensaje personalizado para el área de jardinería
+                textoMsg = `🌿 *LATENTE OPS - MANTENIMIENTO DE JARDINERÍA*\n\nHola *${nombreOperario}*,\nSe te ha asignado el mantenimiento de áreas verdes y jardines para la propiedad:\n🏨 *${nombreHostel}*\n\nPor favor, revisa el estado del predio y confírmame al terminar.`;
             }
-            // 1. APERTURA REAL DE LA VENTANA DE WHATSAPP
-            // Codificamos el texto de forma segura para que los caracteres especiales, 
-            // emojis y saltos de línea funcionen perfectamente en la URL de WhatsApp.
+
             const urlWhatsApp = `https://wa.me/${celularOperario}?text=${encodeURIComponent(textoMsg)}`;
-            
-            // Abrimos WhatsApp en una nueva pestaña del navegador sin interrumpir el panel de administración
             window.open(urlWhatsApp, '_blank');
         }
 
-        // 2. DISPARADOR INICIAL AL CARGAR LA PÁGINA
-        // Escuchamos el evento de que el HTML está listo para mandar a traer 
-        // de inmediato todas las propiedades almacenadas en Supabase.
-        document.addEventListener('DOMContentLoaded', () => {
-            // Aquí se ejecuta tu función principal que limpia el contenedor y renderiza las tarjetas
-            cargarPropiedadesSupabase(); 
-        });
-    // CIERRES OBLIGATORIOS DE ETIQUETAS DEL ARCHIVO
-    // Agrega esto al final del todo para que cargue automáticamente
-document.addEventListener("DOMContentLoaded", cargarPropiedades);
+        // Unificado el trigger de inicio para evitar fallos de carga
+        document.addEventListener("DOMContentLoaded", cargarPropiedades);
     </script>
 </body>
 </html>

@@ -8,22 +8,11 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300&family=Inter:wght@100;300;400;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
 <body>
-<div class="contenedor-app">
-
-  <section class="bloque-app">
-    </section>
-
-  <section class="bloque-app">
-    </section>
-
-</div>
     <div class="fire-glow-top"></div>
     <div class="fire-glow-bottom"></div>
 
-    <!-- Burbuja flotante para éxito sin redirecciones -->
     <div id="toast" class="toast-notification">
         <div class="toast-content">
             <span class="toast-icon">🔥</span>
@@ -58,75 +47,76 @@
             <p>La automatización silenciosa que las propiedades de diseño estaban esperando. Gestione accesos, coordine equipos y mantenga el control absoluto sin alterar la calma de su santuario.</p>
         </section>
 
-        <!-- Formulario priorizado al inicio de la página -->
-        <section class="registration-section" style="margin-bottom: 120px;">
-            <div class="form-header">
-                <h2>Inicie la evolución de su propiedad</h2>
-                <p>Complete el registro para solicitar la integración de su ecosistema personalizado.</p>
-            </div>
-            
-            <form id="latenteForm">
-                <div class="form-group">
-                    <label for="nombre">Nombre de la propiedad</label>
-                    <input type="text" id="nombre" name="nombre" class="form-control" placeholder="Ej. Casa Almar Boutique" required>
-                </div>
-                <div class="form-group">
-                    <label for="ubicacion">Ubicación geográfica</label>
-                    <input type="text" id="ubicacion" name="ubicacion" class="form-control" placeholder="Ej. Sachicá,Boyacá, Direccion" required>
-                </div>
-                <div class="form-group">
-                    <label for="telefono">Línea directa de contacto</label>
-                    <input type="tel" id="telefono" name="telefono" class="form-control" placeholder="Ej. +57300 0000000" required>
-                </div>
-                <button type="submit" class="btn-submit">
-                    <span>Solicitar Acceso Privado</span>
-                    <svg class="arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-                        <path d="M5 12h14M12 5l7 7-7 7"/>
-                    </svg>
-                </button>
-            </form>
-        </section>
+        <div class="main-content">
 
-       <section class="features">
-            <div class="feature-card">
-                <div class="icon-wrapper">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2">
-                        <path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5M14 9l1.5-1.5M17 6l1.5-1.5M16 10l1.5-1.5"/>
-                    </svg>
+            <section class="registration-section">
+                <div class="form-header">
+                    <h2>Inicie la evolución de su propiedad</h2>
+                    <p>Complete el registro para solicitar la integración de su ecosistema personalizado.</p>
                 </div>
-                <h3>Gestión de Llaves</h3>
-                <p>Control riguroso en la entrega y recepción de accesos. Monitoree de forma segura el inventario de llaves de sus propiedades de lujo para garantizar transiciones fluidas sin fricciones en el check-in.</p>
-            </div>
+                
+                <form id="latenteForm">
+                    <div class="form-group">
+                        <label for="nombre">Nombre de la propiedad</label>
+                        <input type="text" id="nombre" name="nombre" class="form-control" placeholder="Ej. Casa Almar Boutique" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="ubicacion">Ubicación geográfica</label>
+                        <input type="text" id="ubicacion" name="ubicacion" class="form-control" placeholder="Ej. Sachicá,Boyacá, Direccion" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="telefono">Línea directa de contacto</label>
+                        <input type="tel" id="telefono" name="telefono" class="form-control" placeholder="Ej. +57300 0000000" required>
+                    </div>
+                    <button type="submit" class="btn-submit">
+                        <span>Solicitar Acceso Privado</span>
+                        <svg class="arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                            <path d="M5 12h14M12 5l7 7-7 7"/>
+                        </svg>
+                    </button>
+                </form>
+            </section>
 
-            <div class="feature-card">
-                <div class="icon-wrapper">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2">
-                        <path d="M12 3v3m0 12v3M3 12h3m12 0h3m-3.5-6.51l-2 2m-9 9l-2-2m11 0l2 2m-11-11l-2-2M12 8a4 4 0 1 0 0 8 4 4 0 0 0 0-8z"/>
-                    </svg>
+            <section class="features">
+                <div class="feature-card">
+                    <div class="icon-wrapper">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2">
+                            <path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5M14 9l1.5-1.5M17 6l1.5-1.5M16 10l1.5-1.5"/>
+                        </svg>
+                    </div>
+                    <h3>Gestión de Llaves</h3>
+                    <p>Control riguroso en la entrega y recepción de accesos. Monitoree de forma segura el inventario de llaves de sus propiedades de lujo para garantizar transiciones fluidas sin fricciones en el check-in.</p>
                 </div>
-                <h3>Aseo de Alto Estándar</h3>
-                <p>Mantenga un nivel operativo de cinco estrellas. Supervise en tiempo real si cada hostel se encuentra Sucio, En Proceso o Limpio, asegurando que cada propiedad esté impecable antes de la llegada VIP.</p>
-            </div>
 
-            <div class="feature-card">
-                <div class="icon-wrapper">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2">
-                        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8zm14 10v-2a4 4 0 0 0-3-3.87m-4-12a4 4 0 0 1 0 7.75"/>
-                    </svg>
+                <div class="feature-card">
+                    <div class="icon-wrapper">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2">
+                            <path d="M12 3v3m0 12v3M3 12h3m12 0h3m-3.5-6.51l-2 2m-9 9l-2-2m11 0l2 2m-11-11l-2-2M12 8a4 4 0 1 0 0 8 4 4 0 0 0 0-8z"/>
+                        </svg>
+                    </div>
+                    <h3>Aseo de Alto Estándar</h3>
+                    <p>Mantenga un nivel operativo de cinco estrellas. Supervise en tiempo real si cada hostel se encuentra Sucio, En Proceso o Limpio, asegurando que cada propiedad esté impecable antes de la llegada VIP.</p>
                 </div>
-                <h3>Personal Asignado</h3>
-                <p>Asignación directa y comunicación en tiempo real con su equipo de confianza. Vincule operarios específicos a cada labor y notifique novedades de forma instantánea y bajo un control 100% manual.</p>
-            </div>
 
-            <div class="price-notice col-span-full">
-                <p>
-                    <span class="notice-badge">Nota Importante</span> 
-                    Las tarifas de los servicios and planes son de referencia. Los costos finales pueden variar y ajustarse de manera personalizada dependiendo de las dimensiones del predio, la ubicación geográfica y los requerimientos específicos de cada propiedad.
-                </p>
-            </div>
-        </section>
+                <div class="feature-card">
+                    <div class="icon-wrapper">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2">
+                            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8zm14 10v-2a4 4 0 0 0-3-3.87m-4-12a4 4 0 0 1 0 7.75"/>
+                        </svg>
+                    </div>
+                    <h3>Personal Asignado</h3>
+                    <p>Asignación directa y comunicación en tiempo real con su equipo de confianza. Vincule operarios específicos a cada labor y notifique novedades de forma instantánea y bajo un control 100% manual.</p>
+                </div>
 
-        <footer>
+                <div class="price-notice">
+                    <p>
+                        <span class="notice-badge">Nota Importante</span> 
+                        Las tarifas de los servicios and planes son de referencia. Los costos finales pueden variar y ajustarse de manera personalizada dependiendo de las dimensiones del predio, la ubicación geográfica y los requerimientos específicos de cada propiedad.
+                    </p>
+                </div>
+            </section>
+
+        </div> <footer>
             <p>&copy; 2026 LATENTE. QUIET LUXURY OPERATIONS. ALL RIGHTS RESERVED.</p>
         </footer>
     </div>
@@ -149,7 +139,6 @@
             }
         });
 
-        // Mecanismo anti-duplicación por software
         let formularioEnProceso = false;
 
         document.getElementById('latenteForm').addEventListener('submit', async function(e) {
@@ -175,7 +164,6 @@
                     setTimeout(() => { toast.classList.remove('show-toast'); }, 4000);
                 }
 
-                // Disparo dual paralelo: 1. Webhook Make
                 fetch(URL_MAKE, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
@@ -187,7 +175,6 @@
                 }).then(() => console.log("Make alertado correctamente"))
                   .catch(err => console.error("Error al alertar a Make:", err));
 
-                // Disparo dual paralelo: 2. Inserción limpia en base de datos en MAYÚSCULAS
                 if (typeof _supabase !== 'undefined' && _supabase) {
                     const { data, error } = await _supabase
                         .from('hosteles')
