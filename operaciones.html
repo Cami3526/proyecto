@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Latente OS - Panel Operativo</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    
+    <script>
+        const SUPABASE_URL = "https://aypexczsibphswwvyhwr.supabase.co";
+        // Esta es tu clave pública anon (está bien tenerla en el cliente)
+        const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImF5cGV4Y3pzaWJwaHN3d3Z5aHdyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk5ODQ3MzIsImV4cCI6MjA5NTU2MDczMn0.-Dyvg3BJfIz8P49qE5EW9pilfToCcE2NjHu4KML3yeM";
+        const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY); 
+    </script>
+</head>
+<body class="min-h-screen bg-zinc-950 text-white p-8 font-sans relative">
+
+    <div id="toastContainer" class="fixed bottom-5 right-5 z-50 flex flex-col gap-3 pointer-events-none"></div>
+
+    <div class="max-w-6xl mx-auto">
+        
+        <div class="flex justify-between items-center mb-10 border-b border-zinc-800 pb-6">
+            <div>
+                <span class="text-xs font-semibold tracking-widest text-amber-400 uppercase">Control de Operaciones</span>
+                <h1 class="text-3xl font-bold tracking-wide mt-1">Monitoreo de Oficios</h1>
+                <p class="text-zinc-400 text-sm mt-1">Asigna tareas de aseo y sube las fotos de evidencia al instante.</p>
+            </div>
+        </div>
+
+        <div id="contenedorHosteles" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div id="mensajeCarga" class="col-span-full text-center py-12 text-zinc-500 animate-pulse text-sm">
+                Sincronizando propiedades con la nube...
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        // Función para el mensaje flotante estilo Latente OS
+        function mostrarToast(mensaje, esError = false) {
+            const container = document.getElementById('toastContainer');
+            const toast = document.createElement('div');
+            toast.className = `transform translate-y-5 opacity-0 transition-all duration-300 pointer-events-auto min-w-[280px] flex items-center gap-3 bg-zinc-900 border ${esError ? 'border-red-500/40 text-red-400' : 'border-emerald-500/40 text-emerald-400'} px-5 py-3.5 rounded-xl shadow-2xl backdrop-blur-md`;
+            toast.innerHTML = `
+                <span class="text-base">${esError ? '⚠️' : '⚡'}</span>
+                <div class="text-xs font-bold tracking-wide text-zinc-200">${mensaje}</div>
+            `;
+            container.appendChild(toast);
+            setTimeout(() => { toast.classList.remove('translate-y-5', 'opacity-0'); }, 10);
+            setTimeout(() => {
+                toast.classList.add('opacity-0', 'translate-y-2');
+                setTimeout(() => { toast.remove(); }, 300);
+            }, 3500);
+        }
+
+        async function cargarPropiedades() {
+            const contenedor = document.getElementById('contenedorHosteles');
+            
+            try {
+                const { data: hosteles, error } = await supabaseClient
+                    .from('hosteles')
+                    .select('*')
+                    .order('id', { ascending: false });
+
+                if (error) throw error;
+                if (!hosteles || hosteles.length === 0) {
+                    contenedor.innerHTML = `<div class="col-span-full text-center py-12 text-zinc-500 text-sm">No se encontraron propiedades registradas.</div>`;
+                    return;
+                }
+
+                contenedor.innerHTML = '';
+
+                hosteles.forEach(hostel => {
+                    const card = document.createElement('div');
+                    card.className = "bg-zinc-900 border border-zinc-800 rounded-2xl p-6 shadow-xl flex flex-col justify-between space-y-6";
+                    
+                    const aseo = (hostel.estado_aseo || 'LIMPIO').toUpperCase();
+
+                    card.innerHTML = `
+                        <div>
+                            <div class="flex justify-between items-start mb-4">
+                                <div>
+                                    <h3 class="text-lg font-bold text-zinc-100 tracking-wide">${hostel.nombre}</h3>
+                                    <p class="text-xs text-amber-500 font-medium mt-0.5">📍 ${hostel.ubicacion || 'Sin ubicación'}</p>
+                                </div>
+                            </div>
+                            
+                            <div class="space-y-4">
+                                <div>
+                                    <label class="block text-[11px] font-bold tracking-wider text-zinc-500 uppercase mb-1.5">Control de Aseo</label>
+                                    <select onchange="actualizarEstado(${hostel.id}, 'estado_aseo', this.value)" 
+                                        class="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-3 py-2 text-xs font-medium text-zinc-300 focus:outline-none focus:border-amber-500 cursor-pointer">
+                                        <option value="SUCIO" ${aseo === 'SUCIO' ? 'selected' : ''}>❌ SUCIO</option>
+                                        <option value="EN PROCESO" ${aseo === 'EN PROCESO' ? 'selected' : ''}>⏳ EN PROCESO</option>
+                                        <option value="LIMPIO" ${aseo === 'LIMPIO' ? 'selected' : ''}>✨ LIMPIO</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="border-t border-zinc-800/60 pt-4 space-y-3">
+                            <label class="block text-[10px] font-bold tracking-wider text-amber-500 uppercase">📸 Cargar Foto del Aseo (WhatsApp o Galería)</label>
+                            <input type="file" id="archivoFoto-${hostel.id}" accept="image/*"
+                                class="w-full text-xs text-zinc-400 file:mr-3 file:py-1.5 file:px-3 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-zinc-800 file:text-white hover:file:bg-zinc-700 cursor-pointer" />
+                            <button onclick="subirFotoAseo(${hostel.id})" id="btnGuardar-${hostel.id}"
+                                class="w-full bg-amber-600 hover:bg-amber-500 text-zinc-950 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer">
+                                Guardar Foto de Aseo
+                            </button>
+                        </div>
+                    `;
+                    contenedor.appendChild(card);
+                });
+
+            } catch (err) {
+                console.error(err);
+                mostrarToast("Error al cargar propiedades de la nube", true);
+            }
+        }
+
+        async function actualizarEstado(idHostel, columna, nuevoValor) {
+            try {
+                const { error } = await supabaseClient.from('hosteles').update({ [columna]: nuevoValor }).eq('id', idHostel);
+                if (error) throw error;
+                mostrarToast("Actualización de estado exitosa");
+            } catch (err) {
+                mostrarToast("Error al actualizar el estado", true);
+            }
+        }
+
+        // SOLUCIÓN DEFINITIVA: SUBE LA FOTO AL BUCKET 'evidencias' DE TU PROPIA CUENTA
+        async function subirFotoAseo(idHostel) {
+            const fileInput = document.getElementById(`archivoFoto-${idHostel}`);
+            const btn = document.getElementById(`btnGuardar-${idHostel}`);
+            const file = fileInput.files[0];
+
+            if (!file) {
+                mostrarToast("Selecciona o arrastra una imagen primero", true);
+                return;
+            }
+
+            btn.innerText = "⚡ Guardando en Storage...";
+            btn.disabled = true;
+
+            try {
+                // 1. Crear nombre de archivo único para evitar duplicados en el bucket
+                const nombreLimpio = file.name.replace(/[^a-zA-Z0-9]/g, '_').toLowerCase();
+                const nombreArchivo = `${idHostel}_aseo_${Date.now()}_${nombreLimpio}`;
+
+                // 2. Subir el archivo al bucket público 'evidencias'
+                const { data: storageData, error: storageError } = await supabaseClient.storage
+                    .from('evidencias')
+                    .upload(nombreArchivo, file);
+
+                if (storageError) throw storageError;
+
+                // 3. Obtener la URL pública de la foto recién subida
+                const { data: urlData } = supabaseClient.storage
+                    .from('evidencias')
+                    .getPublicUrl(nombreArchivo);
+
+                const urlPublicaReal = urlData.publicUrl;
+
+                // 4. Guardar la URL en el array 'fotos_evidencia' del hostel
+                // Primero leemos el array actual para no borrar fotos anteriores (si tienes esa lógica)
+                // Pero como es un text[], simplemente actualizamos la primera posición
+                const { error: updateError } = await supabaseClient
+                    .from('hosteles')
+                    .update({ fotos_evidencia: [urlPublicaReal] }) // Guardamos el link en un array estructurado
+                    .eq('id', idHostel);
+
+                if (updateError) throw updateError;
+
+                mostrarToast("Actualización de estado exitosa");
+                fileInput.value = ""; 
+            } catch (err) {
+                console.error(err);
+                mostrarToast("Error al procesar la imagen: Asegúrate de crear el bucket 'evidencias' y activar las políticas de anon.", true);
+            } finally {
+                btn.innerText = "Guardar Foto de Aseo";
+                btn.disabled = false;
+            }
+        }
+
+        document.addEventListener("DOMContentLoaded", cargarPropiedades);
+    </script>
+</body>
+</html>

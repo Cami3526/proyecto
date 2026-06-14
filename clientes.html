@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Latente OS - Estado de tu Propiedad</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    
+    <script>
+        const SUPABASE_URL = "https://aypexczsibphswwvyhwr.supabase.co";
+        const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImF5cGV4Y3pzaWJwaHN3d3Z5aHdyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk5ODQ3MzIsImV4cCI6MjA5NTU2MDczMn0.-Dyvg3BJfIz8P49qE5EW9pilfToCcE2NjHu4KML3yeM";
+        const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+    </script>
+</head>
+<body class="min-h-screen bg-zinc-950 text-white font-sans p-6 md:p-12">
+
+    <div class="max-w-5xl mx-auto">
+        <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 border-b border-zinc-800 pb-6 gap-4">
+            <div>
+                <span class="text-xs font-semibold tracking-widest text-amber-400 uppercase">Portal de Propietarios</span>
+                <h1 class="text-3xl font-bold tracking-wide mt-1">Consulta de Estado</h1>
+                <p class="text-zinc-400 text-sm mt-1">Por motivos de privacidad, ingresa el nombre de tu propiedad para ver tus reportes.</p>
+            </div>
+            <div class="bg-zinc-900 border border-zinc-800 rounded-xl px-4 py-2.5 flex items-center gap-2">
+                <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                <span class="text-[11px] font-mono font-bold text-zinc-400 uppercase tracking-wider">Módulo Seguro</span>
+            </div>
+        </div>
+
+        <div class="mb-10 bg-zinc-900/40 border border-zinc-800/80 p-6 rounded-2xl shadow-xl">
+            <label class="block text-xs font-bold tracking-wider text-zinc-400 uppercase mb-3">🗝️ Identificador de la Propiedad</label>
+            <div class="relative max-w-xl">
+                <span class="absolute inset-y-0 left-0 flex items-center pl-3.5 pointer-events-none text-zinc-500 text-sm">
+                    🔍
+                </span>
+                <input type="text" id="buscadorPropiedad" oninput="filtrarPropiedadesPrivadas()"
+                    placeholder="Escribe el nombre exacto de tu propiedad aquí..." 
+                    class="w-full bg-zinc-950 border border-zinc-800 rounded-xl pl-10 pr-4 py-3.5 text-sm placeholder-zinc-600 text-zinc-200 focus:outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500 transition-all font-medium tracking-wide" />
+            </div>
+        </div>
+
+        <div id="gridClientes" class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            </div>
+    </div>
+
+    <script>
+        // Lista interna para almacenar los registros de la base de datos
+        let todosLosHosteles = [];
+
+        // Descarga los datos de Supabase en segundo plano de forma segura
+        async function descargarDatosPrivados() {
+            try {
+                const { data: hosteles, error } = await supabaseClient
+                    .from('hosteles')
+                    .select('*');
+
+                if (error) throw error;
+                todosLosHosteles = hosteles || [];
+                
+                // Forzamos a que empiece vacío el portal
+                filtrarPropiedadesPrivadas();
+
+            } catch (err) {
+                console.error("Error en sincronización:", err);
+                document.getElementById('gridClientes').innerHTML = `<div class="col-span-full text-center py-12 text-red-400 text-sm border border-red-950 bg-red-950/20 rounded-2xl">⚠️ Error de conexión con el servidor de Latente OS.</div>`;
+            }
+        }
+
+        // FUNCIÓN CLAVE MEJORADA: Filtra con privacidad estricta
+        function filtrarPropiedadesPrivadas() {
+            const grid = document.getElementById('gridClientes');
+            const textoBusqueda = document.getElementById('buscadorPropiedad').value.toLowerCase().trim();
+            
+            // REGLA 1: Si no han escrito nada, la pantalla se queda 100% vacía con un mensaje de espera
+            if (textoBusqueda.length < 2) {
+                grid.innerHTML = `
+                    <div class="col-span-full text-center py-20 text-zinc-600 text-xs tracking-wider border border-dashed border-zinc-900 rounded-2xl">
+                        🔒 Introduce el nombre de tu propiedad para revelar las evidencias de aseo.
+                    </div>`;
+                return;
+            }
+
+            // REGLA 2: Buscamos coincidencias cerradas para evitar filtraciones masivas
+            const propiedadesEncontradas = todosLosHosteles.filter(hostel => {
+                const nombreHostel = (hostel.nombre || '').toLowerCase();
+                return nombreHostel.includes(textoBusqueda);
+            });
+
+            // REGLA 3: Si lo que escribió no coincide con nada
+            if (propiedadesEncontradas.length === 0) {
+                grid.innerHTML = `
+                    <div class="col-span-full text-center py-16 text-amber-500/70 text-xs font-medium border border-zinc-900 bg-zinc-900/10 rounded-2xl">
+                        ❌ No se encontró ninguna propiedad registrada bajo ese nombre. Verifícalo bien.
+                    </div>`;
+                return;
+            }
+
+            // Si pasa los filtros, dibujamos ÚNICAMENTE la tarjeta del cliente
+            grid.innerHTML = '';
+            propiedadesEncontradas.forEach(hostel => {
+                const tarjeta = document.createElement('div');
+                tarjeta.className = "bg-zinc-900 border border-zinc-800 rounded-2xl p-6 shadow-2xl flex flex-col justify-between space-y-6 transition-all duration-300 transform scale-100";
+
+                const aseo = (hostel.estado_aseo || 'LIMPIO').toUpperCase();
+                
+                let fotoHtml = '';
+                if (hostel.fotos_evidencia && Array.isArray(hostel.fotos_evidencia) && hostel.fotos_evidencia.length > 0 && hostel.fotos_evidencia[0]) {
+                    fotoHtml = `
+                        <div class="relative aspect-video w-full bg-zinc-950 border border-zinc-800 rounded-xl overflow-hidden shadow-md group">
+                            <img src="${hostel.fotos_evidencia[0]}" alt="Estado del Aseo" class="w-full h-full object-cover" />
+                            <a href="${hostel.fotos_evidencia[0]}" target="_blank" class="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center text-xs font-bold text-amber-400 backdrop-blur-xs">
+                                🔍 Abrir fotografía original
+                            </a>
+                        </div>`;
+                } else {
+                    fotoHtml = `
+                        <div class="bg-zinc-950 border border-zinc-800/40 rounded-xl p-8 text-center text-zinc-600 text-xs tracking-wide">
+                            📷 El operario aún no ha cargado fotos de este oficio hoy.
+                        </div>`;
+                    }
+
+                tarjeta.innerHTML = `
+                    <div class="flex justify-between items-start border-b border-zinc-800/60 pb-4">
+                        <div>
+                            <h2 class="text-lg font-bold text-zinc-100 tracking-wide">${hostel.nombre || 'Propiedad'}</h2>
+                            <p class="text-xs text-zinc-500 mt-0.5">📍 ${hostel.ubicacion || 'Ubicación oculta'}</p>
+                        </div>
+                        <span class="text-[10px] font-bold px-2.5 py-1 rounded-md ${aseo === 'SUCIO' ? 'bg-red-950/40 text-red-400 border border-red-900/50' : aseo === 'EN PROCESO' ? 'bg-amber-950/40 text-amber-400 border border-amber-900/50' : 'bg-emerald-950/40 text-emerald-400 border border-emerald-900/50'}">
+                            ${aseo}
+                        </span>
+                    </div>
+
+                    <div class="space-y-2">
+                        <span class="block text-[10px] font-bold tracking-wider text-zinc-500 uppercase">Evidencia Fotográfica de Entrega</span>
+                        ${fotoHtml}
+                    </div>
+                `;
+                grid.appendChild(tarjeta);
+            });
+        }
+
+        // Realtime activo: si actualizas una foto en operaciones.html, se refresca el buscador sin cerrarse
+        supabaseClient
+            .channel('cambios-privados')
+            .on('postgres_changes', { event: '*', filter: 'schema=public', table: 'hosteles' }, () => {
+                descargarDatosPrivados();
+            })
+            .subscribe();
+
+        // Carga inicial segura
+        document.addEventListener("DOMContentLoaded", descargarDatosPrivados);
+    </script>
+</body>
+</html>

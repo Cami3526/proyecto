@@ -7,7 +7,7 @@
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
     
-    <link rel="manifest" href="manifest.json">
+    <link class="border-zinc-800" rel="manifest" href="manifest.json">
     <script>
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
@@ -19,11 +19,11 @@
     </script>
 
     <script>
-        const SUPABASE_URL = "https://aypexczsibphswwvyhwr.supabase.co"; 
+        const SUPABASE_URL = "https://aypexczsibphswwvyhwr.supabase.co";
         const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImF5cGV4Y3pzaWJwaHN3d3Z5aHdyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk5ODQ3MzIsImV4cCI6MjA5NTU2MDczMn0.-Dyvg3BJfIz8P49qE5EW9pilfToCcE2NjHu4KML3yeM";
-        
-        const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
+        const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY); 
+        
         async function verificarSesion() {
             try {
                 const { data: { session } } = await supabaseClient.auth.getSession();
@@ -93,7 +93,6 @@
                     const card = document.createElement('div');
                     card.className = "bg-zinc-900 border border-zinc-800 rounded-2xl p-6 shadow-xl relative overflow-hidden flex flex-col justify-between";
                     
-                    // Normalizar estados para evitar errores de coincidencia visual
                     const aseo = (hostel.estado_aseo || 'LIMPIO').toUpperCase();
                     const llaves = (hostel.estado_llaves || 'EN OFICINA').toUpperCase();
                     const jardineria = (hostel.estado_jardineria || 'MANTENIDO').toUpperCase();
@@ -232,19 +231,16 @@
 
             let textoMsg = "";
             if (tipoMensaje === 'aseo') {
-                textoMsg = `🧹 *LATENTE OPS - ASIGNACIÓN DE ASEO*\n\nHola *${nombreOperario}*,\nSe te ha asignado el servicio de limpieza para la propiedad:\n🏨 *${nombreHostel}*\n\nPor favor, confírmame cuando vayas en camino. ¡Muchas gracias!`;
+                textoMsg = `模 *LATENTE OPS - ASIGNACIÓN DE ASEO*\n\nHola *${nombreOperario}*,\nSe te ha asignado el servicio de limpieza para la propiedad:\n🏨 *${nombreHostel}*\n\nPor favor, confírmame cuando vayas en camino. ¡Muchas gracias!`;
             } else if (tipoMensaje === 'llaves') {
                 textoMsg = `🔑 *LATENTE OPS - CONTROL DE LLAVES*\n\nHola *${nombreOperario}*,\nEstás a cargo de la gestión de llaves para la propiedad:\n🏨 *${nombreHostel}*\n\nPor favor, mantén el estado actualizado en el sistema.`;
             } else if (tipoMensaje === 'jardineria') {
-                // Mensaje personalizado para el área de jardinería
-                textoMsg = `🌿 *LATENTE OPS - MANTENIMIENTO DE JARDINERÍA*\n\nHola *${nombreOperario}*,\nSe te ha asignado el mantenimiento de áreas verdes y jardines para la propiedad:\n🏨 *${nombreHostel}*\n\nPor favor, revisa el estado del predio y confírmame al terminar.`;
+                textoMsg = `🌿 *LATENTE OPS - MANTENIMIENTO DE JARDINERÍA*\n\nHola *${nombreOperario}*,\nSe te ha asignado el mantenimiento de áreas verdes y gardens para la propiedad:\n🏨 *${nombreHostel}*\n\nPor favor, revisa el estado del predio y confírmame al terminar.`;
             }
 
             const urlWhatsApp = `https://wa.me/${celularOperario}?text=${encodeURIComponent(textoMsg)}`;
             window.open(urlWhatsApp, '_blank');
         }
-
-        // Unificado el trigger de inicio para evitar fallos de carga
         document.addEventListener("DOMContentLoaded", cargarPropiedades);
     </script>
 </body>
