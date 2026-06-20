@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Latente OS - Estado de tu Propiedad</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
     
@@ -12,43 +13,293 @@
         const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImF5cGV4Y3pzaWJwaHN3d3Z5aHdyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk5ODQ3MzIsImV4cCI6MjA5NTU2MDczMn0.-Dyvg3BJfIz8P49qE5EW9pilfToCcE2NjHu4KML3yeM";
         const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
     </script>
+    <link rel="manifest" href="manifest-clientes.json">
 </head>
-<body class="min-h-screen bg-zinc-950 text-white font-sans p-6 md:p-12">
+<body class="min-h-screen bg-[#0A0908] text-[#F9F7F5] font-sans p-6 md:p-12 pb-24 relative">
+
+    <!-- BOTÓN DE WHATSAPP FLOTANTE GLOBAL -->
+    <a href="https://wa.me/573002154507?text=Hola%20Latente%20OS%2C%20necesito%20asistencia%20con%20el%20portal." 
+       target="_blank" 
+       class="fixed bottom-6 right-6 w-14 h-14 bg-[#25D366] text-white rounded-full flex items-center justify-center text-2xl shadow-2xl hover:scale-110 active:scale-95 transition-all z-50">
+        <i class="fa-brands fa-whatsapp"></i>
+    </a>
 
     <div class="max-w-5xl mx-auto">
+        
+        <!-- CABECERA PRINCIPAL -->
         <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 border-b border-zinc-800 pb-6 gap-4">
             <div>
-                <span class="text-xs font-semibold tracking-widest text-amber-400 uppercase">Portal de Propietarios</span>
+                <span class="text-xs font-semibold tracking-widest text-[#E0A96D] uppercase">Portal de Propietarios</span>
                 <h1 class="text-3xl font-bold tracking-wide mt-1">Consulta de Estado</h1>
-                <p class="text-zinc-400 text-sm mt-1">Por motivos de privacidad, ingresa el nombre de tu propiedad para ver tus reportes.</p>
+                <p class="text-[#9E948A] text-sm mt-1">Por motivos de privacidad, ingresa el nombre de tu propiedad para ver tus reportes.</p>
             </div>
-            <div class="bg-zinc-900 border border-zinc-800 rounded-xl px-4 py-2.5 flex items-center gap-2">
+            <div class="bg-[#13110F] border border-zinc-800 rounded-xl px-4 py-2.5 flex items-center gap-2">
                 <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-                <span class="text-[11px] font-mono font-bold text-zinc-400 uppercase tracking-wider">Módulo Seguro</span>
+                <span class="text-[11px] font-mono font-bold text-[#9E948A] uppercase tracking-wider">Módulo Seguro</span>
             </div>
         </div>
 
-        <div class="mb-10 bg-zinc-900/40 border border-zinc-800/80 p-6 rounded-2xl shadow-xl">
-            <label class="block text-xs font-bold tracking-wider text-zinc-400 uppercase mb-3">🗝️ Identificador de la Propiedad</label>
+        <!-- SECCIÓN: ESTADOS PUBLICITARIOS (REALTIME SUPABASE - 24 HORAS) -->
+        <div class="mb-10">
+            <h3 class="text-xs font-bold tracking-wider text-[#9E948A] uppercase mb-4 flex items-center gap-2">
+                <span class="inline-block w-1.5 h-3 bg-[#FF5A1F]"></span> Novedades de Aliados (Últimas 24h)
+            </h3>
+            <div id="contenedorEstados" class="flex items-center gap-5 overflow-x-auto pb-3 scrollbar-none">
+                <!-- Se rellena automáticamente desde Supabase -->
+                <p id="msgSinEstados" class="text-xs text-zinc-600 italic">No hay novedades comerciales activas en este momento.</p>
+            </div>
+        </div>
+
+        <!-- BUSCADOR DE PROPIEDADES ORIGINAL -->
+        <div class="mb-10 bg-[#13110F] border border-zinc-800/80 p-6 rounded-2xl shadow-xl">
+            <label class="block text-xs font-bold tracking-wider text-[#9E948A] uppercase mb-3">🗝️ Identificador de la Propiedad</label>
             <div class="relative max-w-xl">
                 <span class="absolute inset-y-0 left-0 flex items-center pl-3.5 pointer-events-none text-zinc-500 text-sm">
                     🔍
                 </span>
                 <input type="text" id="buscadorPropiedad" oninput="filtrarPropiedadesPrivadas()"
                     placeholder="Escribe el nombre exacto de tu propiedad aquí..." 
-                    class="w-full bg-zinc-950 border border-zinc-800 rounded-xl pl-10 pr-4 py-3.5 text-sm placeholder-zinc-600 text-zinc-200 focus:outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500 transition-all font-medium tracking-wide" />
+                    class="w-full bg-[#0A0908] border border-zinc-800 rounded-xl pl-10 pr-4 py-3.5 text-sm placeholder-zinc-600 text-zinc-200 focus:outline-none focus:border-[#FF5A1F] focus:ring-1 focus:ring-[#FF5A1F] transition-all font-medium tracking-wide" />
             </div>
         </div>
 
-        <div id="gridClientes" class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <!-- GRID DE RESULTADOS DE PROPIEDADES ORIGINAL -->
+        <div id="gridClientes" class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-12"></div>
+
+        <!-- SECCIÓN: FICHAS FIJAS DESDE EL CÓDIGO (SIN USAR SUPABASE PARA ESTO) -->
+        <div class="border-t border-zinc-900 pt-10 mb-6">
+            <h3 class="text-xs font-bold tracking-wider text-[#9E948A] uppercase mb-6 flex items-center gap-2">
+                <span class="inline-block w-1.5 h-3 bg-[#E0A96D]"></span> Catálogo exclusivo de Aliados
+            </h3>
+           <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+                
+                <!-- PRODUCTO 1: AMENITIES -->
+                <div class="bg-[#13110F] border border-zinc-800/60 rounded-2xl overflow-hidden flex flex-col justify-between shadow-lg">
+                    <div>
+                        <div class="aspect-video w-full bg-zinc-950">
+                            <img src="img/amenities.jpg" onerror="this.src='https://images.unsplash.com/photo-1540555700478-4be289fbecef?auto=format&fit=crop&w=500&q=80'" class="w-full h-full object-cover" alt="Amenities" />
+                        </div>
+                        <div class="p-5">
+                            <h4 class="text-sm font-bold text-[#F9F7F5] tracking-wide">Kits de Amenities Orgánicos</h4>
+                            <p class="text-xs text-[#9E948A] mt-2 leading-relaxed">Amenities premium (shampoo, jabón y cremas) elaborados con extractos naturales ecológicos. Ideales para la mejor experiencia de tus huéspedes.</p>
+                        </div>
+                    </div>
+                    <div class="p-5 pt-0">
+                        <a href="https://wa.me/573002154507?text=Hola%20Latente%20OS%2C%20me%20interesa%20adquirir%20los%20Kits%20de%20Amenities%20Org%C3%A1nicos." 
+                           target="_blank" 
+                           class="w-full bg-[#13110F] border border-[#FF5A1F] text-[#F9F7F5] font-semibold text-xs py-2.5 rounded-xl flex items-center justify-center gap-2 hover:bg-[#FF5A1F] transition-all text-center">
+                            <i class="fa-brands fa-whatsapp"></i> Cotizar Producto
+                        </a>
+                    </div>
+                </div>
+
+                <!-- PRODUCTO 2: CERRADURAS INTELIGENTES -->
+                <div class="bg-[#13110F] border border-zinc-800/60 rounded-2xl overflow-hidden flex flex-col justify-between shadow-lg">
+                    <div>
+                        <div class="aspect-video w-full bg-zinc-950">
+                            <img src="img/cerraduras.jpg" onerror="this.src='https://images.unsplash.com/photo-1513694203232-719a280e022f?auto=format&fit=crop&w=500&q=80'" class="w-full h-full object-cover" alt="Cerraduras" />
+                        </div>
+                        <div class="p-5">
+                            <h4 class="text-sm font-bold text-[#F9F7F5] tracking-wide">Cerraduras Inteligentes Domóticas</h4>
+                            <p class="text-xs text-[#9E948A] mt-2 leading-relaxed">Control de accesos automatizado, remoto y seguro. Genera contraseñas temporales para tus huéspedes de Airbnb de forma fácil.</p>
+                        </div>
+                    </div>
+                    <div class="p-5 pt-0">
+                        <a href="https://wa.me/573002154507?text=Hola%20Latente%20OS%2C%20deseo%20m%C3%A1s%20informaci%C3%B3n%20sobre%20las%20Cerraduras%20Inteligentes." 
+                           target="_blank" 
+                           class="w-full bg-[#13110F] border border-[#FF5A1F] text-[#F9F7F5] font-semibold text-xs py-2.5 rounded-xl flex items-center justify-center gap-2 hover:bg-[#FF5A1F] transition-all text-center">
+                            <i class="fa-brands fa-whatsapp"></i> Cotizar Producto
+                        </a>
+                    </div>
+                </div>
+
+                <!-- PRODUCTO 3: LENCERÍA PREMIUM -->
+                <div class="bg-[#13110F] border border-zinc-800/60 rounded-2xl overflow-hidden flex flex-col justify-between shadow-lg">
+                    <div>
+                        <div class="aspect-video w-full bg-zinc-950">
+                            <img src="img/lenceria.jpg" onerror="this.src='https://images.unsplash.com/photo-1631679706909-1844bbd07221?auto=format&fit=crop&w=500&q=80'" class="w-full h-full object-cover" alt="Lencería" />
+                        </div>
+                        <div class="p-5">
+                            <h4 class="text-sm font-bold text-[#F9F7F5] tracking-wide">Blanco y Lencería de Alta Densidad</h4>
+                            <p class="text-xs text-[#9E948A] mt-2 leading-relaxed">Sábanas de más de 300 hilos, protectores acolchados y toallas hoteleras de alto gramaje resistentes al lavado industrial continuo.</p>
+                        </div>
+                    </div>
+                    <div class="p-5 pt-0">
+                        <a href="https://wa.me/573002154507?text=Hola%20Latente%20OS%2C%20quiero%20cotizar%20la%20Lencer%C3%ADa%20y%20Blancos%20Hoteleros." 
+                           target="_blank" 
+                           class="w-full bg-[#13110F] border border-[#FF5A1F] text-[#F9F7F5] font-semibold text-xs py-2.5 rounded-xl flex items-center justify-center gap-2 hover:bg-[#FF5A1F] transition-all text-center">
+                            <i class="fa-brands fa-whatsapp"></i> Cotizar Producto
+                        </a>
+                    </div>
+                </div>
+
+                <!-- PRODUCTO 4: TRANSPORTE -->
+                <div class="bg-[#13110F] border border-zinc-800/60 rounded-2xl overflow-hidden flex flex-col justify-between shadow-lg">
+                    <div>
+                        <div class="aspect-video w-full bg-zinc-950">
+                            <img src="img/transporte.jpg" onerror="this.src='https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?auto=format&fit=crop&w=500&q=80'" class="w-full h-full object-cover" alt="Transporte" />
+                        </div>
+                        <div class="p-5">
+                            <h4 class="text-sm font-bold text-[#F9F7F5] tracking-wide">Transporte Privado y Traslados</h4>
+                            <p class="text-xs text-[#9E948A] mt-2 leading-relaxed">Conexiones directas para tus huéspedes desde aeropuertos o terminales hasta la propiedad. Vehículos cómodos y conductores certificados.</p>
+                        </div>
+                    </div>
+                    <div class="p-5 pt-0">
+                        <a href="https://wa.me/573002154507?text=Hola%20Latente%20OS%2C%20solicito%20informaci%C3%B3n%20sobre%20el%20Servicio%20de%20Transporte%20Aliado." 
+                           target="_blank" 
+                           class="w-full bg-[#13110F] border border-[#FF5A1F] text-[#F9F7F5] font-semibold text-xs py-2.5 rounded-xl flex items-center justify-center gap-2 hover:bg-[#FF5A1F] transition-all text-center">
+                            <i class="fa-brands fa-whatsapp"></i> Cotizar Producto
+                        </a>
+                    </div>
+                </div>
+
+                <!-- PRODUCTO 5: MANTENIMIENTO -->
+                <div class="bg-[#13110F] border border-zinc-800/60 rounded-2xl overflow-hidden flex flex-col justify-between shadow-lg">
+                    <div>
+                        <div class="aspect-video w-full bg-zinc-950">
+                            <img src="img/mantenimiento.jpg" onerror="this.src='https://images.unsplash.com/photo-1581578731548-c64695cc6952?auto=format&fit=crop&w=500&q=80'" class="w-full h-full object-cover" alt="Mantenimiento" />
+                        </div>
+                        <div class="p-5">
+                            <h4 class="text-sm font-bold text-[#F9F7F5] tracking-wide">Mantenimiento Preventivo Express</h4>
+                            <p class="text-xs text-[#9E948A] mt-2 leading-relaxed">Técnicos aliados listos para reparaciones rápidas de plomería, electricidad o pintura entre reservas, protegiendo tus calificaciones.</p>
+                        </div>
+                    </div>
+                    <div class="p-5 pt-0">
+                        <a href="https://wa.me/573002154507?text=Hola%20Latente%20OS%2C%20necesito%20asistencia%20de%20Mantenimiento%20Preventivo%20para%20una%20propiedad." 
+                           target="_blank" 
+                           class="w-full bg-[#13110F] border border-[#FF5A1F] text-[#F9F7F5] font-semibold text-xs py-2.5 rounded-xl flex items-center justify-center gap-2 hover:bg-[#FF5A1F] transition-all text-center">
+                            <i class="fa-brands fa-whatsapp"></i> Cotizar Producto
+                        </a>
+                    </div>
+                </div>
+
+                <!-- PRODUCTO 6: CAFÉ -->
+                <div class="bg-[#13110F] border border-zinc-800/60 rounded-2xl overflow-hidden flex flex-col justify-between shadow-lg">
+                    <div>
+                        <div class="aspect-video w-full bg-zinc-950">
+                            <img src="img/cafe.jpg" onerror="this.src='https://images.unsplash.com/photo-1447933601403-0c6688de566e?auto=format&fit=crop&w=500&q=80'" class="w-full h-full object-cover" alt="Café" />
+                        </div>
+                        <div class="p-5">
+                            <h4 class="text-sm font-bold text-[#F9F7F5] tracking-wide">Kits de Café Especial de Origen</h4>
+                            <p class="text-xs text-[#9E948A] mt-2 leading-relaxed">Packs de café de especialidad local molido y empacado para obsequiar en tus barras de cortesía. Un detalle inolvidable.</p>
+                        </div>
+                    </div>
+                    <div class="p-5 pt-0">
+                        <a href="https://wa.me/573002154507?text=Hola%20Latente%20OS%2C%20quiero%20solicitar%20los%20Kits%20de%20Caf%C3%A9%20de%20Origen%20para%20bienvenida." 
+                           target="_blank" 
+                           class="w-full bg-[#13110F] border border-[#FF5A1F] text-[#F9F7F5] font-semibold text-xs py-2.5 rounded-xl flex items-center justify-center gap-2 hover:bg-[#FF5A1F] transition-all text-center">
+                            <i class="fa-brands fa-whatsapp"></i> Cotizar Producto
+                        </a>
+                    </div>
+                </div>
+
+                <!-- PRODUCTO 7: EXPERIENCIAS -->
+                <div class="bg-[#13110F] border border-zinc-800/60 rounded-2xl overflow-hidden flex flex-col justify-between shadow-lg sm:col-span-2 md:col-span-1">
+                    <div>
+                        <div class="aspect-video w-full bg-zinc-950">
+                            <img src="img/experiencias.jpg" onerror="this.src='https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?auto=format&fit=crop&w=500&q=80'" class="w-full h-full object-cover" alt="Experiencias" />
+                        </div>
+                        <div class="p-5">
+                            <h4 class="text-sm font-bold text-[#F9F7F5] tracking-wide">Catálogo de Guías y Rutas Locales</h4>
+                            <p class="text-xs text-[#9E948A] mt-2 leading-relaxed">Conexión con recorridos guiados, paseos ecológicos y experiencias regionales exclusivas para enriquecer la estadía de tus huéspedes.</p>
+                        </div>
+                    </div>
+                    <div class="p-5 pt-0">
+                        <a href="https://wa.me/573002154507?text=Hola%20Latente%20OS%2C%20me%20gustar%C3%ADa%20vincular%20el%20Cat%C3%A1logo%20de%20Experiencias%20y%20Tours." 
+                           target="_blank" 
+                           class="w-full bg-[#13110F] border border-[#FF5A1F] text-[#F9F7F5] font-semibold text-xs py-2.5 rounded-xl flex items-center justify-center gap-2 hover:bg-[#FF5A1F] transition-all text-center">
+                            <i class="fa-brands fa-whatsapp"></i> Cotizar Producto
+                        </a>
+                    </div>
+                </div>
+
+           </div>
+        </div>
+
+    </div>
+
+    <!-- MODAL PARA VER EL ESTADO MEJORADO CON BOTONES LATERALES -->
+    <div id="modalEstado" onclick="cerrarModalAlHacerClicFuera(event)" class="fixed inset-0 bg-black/95 hidden items-center justify-center z-[100] backdrop-blur-md transition-all duration-300">
+        
+        <!-- Botón para CERRAR (Esquina superior derecha) -->
+        <button onclick="cerrarModalEstado()" class="absolute top-6 right-6 z-50 text-zinc-400 hover:text-white text-3xl w-12 h-12 flex items-center justify-center bg-zinc-900/60 rounded-full border border-zinc-800/40 transition-all cursor-pointer active:scale-95">
+            &times;
+        </button>
+
+        <!-- Botón ANTERIOR (Lado izquierdo) -->
+        <button onclick="estadoAnterior(event)" class="absolute left-4 md:left-8 top-1/2 -translate-y-1/2 z-50 text-zinc-400 hover:text-white text-2xl w-12 h-12 flex items-center justify-center bg-zinc-900/60 rounded-full border border-zinc-800/40 transition-all cursor-pointer active:scale-95">
+            <i class="fa-solid fa-chevron-left"></i>
+        </button>
+
+        <!-- CONTENEDOR DE LA IMAGEN CENTRAL -->
+        <div class="relative w-full max-w-md px-4 flex flex-col items-center justify-center">
+            <div class="w-full aspect-[3/4] bg-zinc-950 border border-zinc-800 rounded-2xl overflow-hidden shadow-2xl">
+                <img id="modalImagen" src="" class="w-full h-full object-cover" alt="Estado" />
             </div>
+            <!-- Etiqueta inferior con el título -->
+            <span id="modalTitulo" class="text-sm font-bold tracking-wide text-[#E0A96D] mt-4 bg-[#13110F]/80 px-5 py-2 rounded-full border border-zinc-800/50 text-center shadow-lg">Anuncio Aliado</span>
+        </div>
+
+        <!-- Botón SIGUIENTE (Lado derecho) -->
+        <button onclick="estadoSiguiente(event)" class="absolute right-4 md:right-8 top-1/2 -translate-y-1/2 z-50 text-zinc-400 hover:text-white text-2xl w-12 h-12 flex items-center justify-center bg-zinc-900/60 rounded-full border border-zinc-800/40 transition-all cursor-pointer active:scale-95">
+            <i class="fa-solid fa-chevron-right"></i>
+        </button>
     </div>
 
     <script>
-        // Lista interna para almacenar los registros de la base de datos
         let todosLosHosteles = [];
+        // Variables globales para el carrusel en tiempo real
+        let listaEstadosGlobal = [];
+        let indiceEstadoActivo = 0;
 
-        // Descarga los datos de Supabase en segundo plano de forma segura
+        // NUEVA FUNCIÓN: Trae de Supabase los estados de las últimas 24h
+        async function cargarEstadosPublicitarios() {
+            try {
+                const hace24Horas = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
+                
+                const { data: estados, error } = await supabaseClient
+                    .from('publicidad_estados')
+                    .select('*')
+                    .gte('creado_el', hace24Horas)
+                    .order('creado_el', { ascending: false });
+
+                if (error) throw error;
+
+                // Almacenar globalmente para que las flechas laterales funcionen de inmediato
+                listaEstadosGlobal = estados || [];
+                const contenedor = document.getElementById('contenedorEstados');
+                
+                if (listaEstadosGlobal.length > 0) {
+                    document.getElementById('msgSinEstados').style.display = 'none';
+                    
+                    // Limpiar burbujas previas para que no se dupliquen con Realtime
+                    const elementosPrevios = contenedor.querySelectorAll('.burbuja-estado');
+                    elementosPrevios.forEach(el => el.remove());
+
+                    listaEstadosGlobal.forEach((est, index) => {
+                        const burbuja = document.createElement('div');
+                        burbuja.className = "burbuja-estado flex flex-col items-center cursor-pointer group shrink-0";
+                        burbuja.onclick = () => abrirModalEstado(index);
+                        burbuja.innerHTML = `
+                            <div class="w-16 h-16 rounded-full p-[2.5px] bg-gradient-to-tr from-[#FF5A1F] to-[#FF7A00] group-hover:rotate-12 transition-transform duration-300">
+                                <div class="w-full h-full rounded-full border-2 border-[#0A0908] overflow-hidden">
+                                    <img src="${est.url_imagen}" class="w-full h-full object-cover" />
+                                </div>
+                            </div>
+                            <span class="text-[11px] text-[#9E948A] mt-1.5 group-hover:text-[#F9F7F5] transition-colors max-w-[80px] truncate text-center">${est.titulo}</span>
+                        `;
+                        contenedor.appendChild(burbuja);
+                    });
+                } else {
+                    document.getElementById('msgSinEstados').style.display = 'block';
+                    const elementosPrevios = contenedor.querySelectorAll('.burbuja-estado');
+                    elementosPrevios.forEach(el => el.remove());
+                }
+            } catch (err) {
+                console.error("Error cargando anuncios de estados:", err);
+            }
+        }
+
         async function descargarDatosPrivados() {
             try {
                 const { data: hosteles, error } = await supabaseClient
@@ -57,8 +308,6 @@
 
                 if (error) throw error;
                 todosLosHosteles = hosteles || [];
-                
-                // Forzamos a que empiece vacío el portal
                 filtrarPropiedadesPrivadas();
 
             } catch (err) {
@@ -67,12 +316,10 @@
             }
         }
 
-        // FUNCIÓN CLAVE MEJORADA: Filtra con privacidad estricta
         function filtrarPropiedadesPrivadas() {
             const grid = document.getElementById('gridClientes');
             const textoBusqueda = document.getElementById('buscadorPropiedad').value.toLowerCase().trim();
             
-            // REGLA 1: Si no han escrito nada, la pantalla se queda 100% vacía con un mensaje de espera
             if (textoBusqueda.length < 2) {
                 grid.innerHTML = `
                     <div class="col-span-full text-center py-20 text-zinc-600 text-xs tracking-wider border border-dashed border-zinc-900 rounded-2xl">
@@ -81,13 +328,11 @@
                 return;
             }
 
-            // REGLA 2: Buscamos coincidencias cerradas para evitar filtraciones masivas
             const propiedadesEncontradas = todosLosHosteles.filter(hostel => {
                 const nombreHostel = (hostel.nombre || '').toLowerCase();
                 return nombreHostel.includes(textoBusqueda);
             });
 
-            // REGLA 3: Si lo que escribió no coincide con nada
             if (propiedadesEncontradas.length === 0) {
                 grid.innerHTML = `
                     <div class="col-span-full text-center py-16 text-amber-500/70 text-xs font-medium border border-zinc-900 bg-zinc-900/10 rounded-2xl">
@@ -96,11 +341,10 @@
                 return;
             }
 
-            // Si pasa los filtros, dibujamos ÚNICAMENTE la tarjeta del cliente
             grid.innerHTML = '';
             propiedadesEncontradas.forEach(hostel => {
                 const tarjeta = document.createElement('div');
-                tarjeta.className = "bg-zinc-900 border border-zinc-800 rounded-2xl p-6 shadow-2xl flex flex-col justify-between space-y-6 transition-all duration-300 transform scale-100";
+                tarjeta.className = "bg-[#13110F] border border-zinc-800 rounded-2xl p-6 shadow-2xl flex flex-col justify-between space-y-6 transition-all duration-300 transform scale-100";
 
                 const aseo = (hostel.estado_aseo || 'LIMPIO').toUpperCase();
                 
@@ -109,7 +353,7 @@
                     fotoHtml = `
                         <div class="relative aspect-video w-full bg-zinc-950 border border-zinc-800 rounded-xl overflow-hidden shadow-md group">
                             <img src="${hostel.fotos_evidencia[0]}" alt="Estado del Aseo" class="w-full h-full object-cover" />
-                            <a href="${hostel.fotos_evidencia[0]}" target="_blank" class="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center text-xs font-bold text-amber-400 backdrop-blur-xs">
+                            <a href="${hostel.fotos_evidencia[0]}" target="_blank" class="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center text-xs font-bold text-[#E0A96D] backdrop-blur-[2px]">
                                 🔍 Abrir fotografía original
                             </a>
                         </div>`;
@@ -118,7 +362,7 @@
                         <div class="bg-zinc-950 border border-zinc-800/40 rounded-xl p-8 text-center text-zinc-600 text-xs tracking-wide">
                             📷 El operario aún no ha cargado fotos de este oficio hoy.
                         </div>`;
-                    }
+                }
 
                 tarjeta.innerHTML = `
                     <div class="flex justify-between items-start border-b border-zinc-800/60 pb-4">
@@ -140,16 +384,74 @@
             });
         }
 
-        // Realtime activo: si actualizas una foto en operaciones.html, se refresca el buscador sin cerrarse
+        function abrirModalEstado(index) {
+            if (listaEstadosGlobal.length === 0) return;
+            
+            indiceEstadoActivo = index;
+            const modal = document.getElementById('modalEstado');
+            const estadoActual = listaEstadosGlobal[indiceEstadoActivo];
+            
+            document.getElementById('modalImagen').src = estadoActual.url_imagen;
+            document.getElementById('modalTitulo').innerText = estadoActual.titulo || "Anuncio Aliado";
+            
+            modal.style.display = 'flex';
+        }
+
+        function cerrarModalEstado() {
+            document.getElementById('modalEstado').style.display = 'none';
+        }
+
+        function estadoSiguiente(event) {
+            if (event) event.stopPropagation();
+            if (listaEstadosGlobal.length <= 1) return;
+
+            indiceEstadoActivo++;
+            if (indiceEstadoActivo >= listaEstadosGlobal.length) {
+                indiceEstadoActivo = 0;
+            }
+            abrirModalEstado(indiceEstadoActivo);
+        }
+
+        function estadoAnterior(event) {
+            if (event) event.stopPropagation();
+            if (listaEstadosGlobal.length <= 1) return;
+
+            indiceEstadoActivo--;
+            if (indiceEstadoActivo < 0) {
+                indiceEstadoActivo = listaEstadosGlobal.length - 1;
+            }
+            abrirModalEstado(indiceEstadoActivo);
+        }
+
+        function cerrarModalAlHacerClicFuera(event) {
+            if (event.target === event.currentTarget) {
+                cerrarModalEstado();
+            }
+        }
+
+        // SINCRONIZACIÓN EN TIEMPO REAL CON EL ADMINISTRADOR DE ANUNCIOS
         supabaseClient
             .channel('cambios-privados')
             .on('postgres_changes', { event: '*', filter: 'schema=public', table: 'hosteles' }, () => {
                 descargarDatosPrivados();
             })
+            .on('postgres_changes', { event: '*', filter: 'schema=public', table: 'publicidad_estados' }, () => {
+                // Al detectar cualquier INSERT, UPDATE o DELETE del admin, repinta las historias al vuelo
+                cargarEstadosPublicitarios();
+            })
             .subscribe();
 
-        // Carga inicial segura
-        document.addEventListener("DOMContentLoaded", descargarDatosPrivados);
+        // Carga inicial al abrir el portal
+        document.addEventListener("DOMContentLoaded", () => {
+            descargarDatosPrivados();
+            cargarEstadosPublicitarios();
+        });
+
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('sw.js')
+                .then(() => console.log('Modo App Activado Correctamente'))
+                .catch(err => console.log('Error al activar Modo App', err));
+        }
     </script>
 </body>
 </html>

@@ -13,8 +13,42 @@
         const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImF5cGV4Y3pzaWJwaHN3d3Z5aHdyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk5ODQ3MzIsImV4cCI6MjA5NTU2MDczMn0.-Dyvg3BJfIz8P49qE5EW9pilfToCcE2NjHu4KML3yeM";
         const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY); 
     </script>
+    <link rel="manifest" href="manifest-operaciones.json">
 </head>
 <body class="min-h-screen bg-zinc-950 text-white p-8 font-sans relative">
+    <!DOCTYPE html>
+<html lang="es">
+<head>
+    <!-- AQUÍ NO VA EL BOTÓN (Esto es para configuraciones) -->
+    <meta charset="UTF-8">
+    <title>Operaciones - Latente OS</title>
+</head>
+<body class="min-h-screen bg-[#0A0908] text-[#F9F7F5] p-6"> <!-- El cuerpo de la página -->
+
+    <div class="max-w-5xl mx-auto">
+        
+        <!-- CABECERA PRINCIPAL -->
+        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8 border-b border-zinc-800 pb-6">
+            <div>
+                <span class="text-xs font-semibold tracking-widest text-[#E0A96D] uppercase">Módulo de Trabajo</span>
+                <h1 class="text-3xl font-bold tracking-wide mt-1">Operaciones</h1>
+            </div>
+            
+            <!-- >>> AQUÍ SÍ VA EL BOTÓN, EN EL BODY Y AL LADO DEL TÍTULO <<< -->
+            <div>
+                <a href="admin-anuncios.html" 
+                   class="inline-flex items-center gap-2 bg-[#13110F] border border-[#FF5A1F] text-[#F9F7F5] hover:bg-[#FF5A1F] font-semibold text-xs px-4 py-2.5 rounded-xl transition-all shadow-lg active:scale-95">
+                    <i class="fa-solid fa-bullhorn text-[#FF5A1F]"></i>
+                    <span>Lanzar Estados</span>
+                </a>
+            </div>
+        </div>
+
+        <!-- El resto de tu código de operaciones (tablas, formularios, etc.) va hacia abajo... -->
+
+    </div>
+</body>
+</html>
 
     <div id="toastContainer" class="fixed bottom-5 right-5 z-50 flex flex-col gap-3 pointer-events-none"></div>
 
@@ -183,6 +217,12 @@
         }
 
         document.addEventListener("DOMContentLoaded", cargarPropiedades);
+        // Registrar el Service Worker para habilitar la instalación de la App
+if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('sw.js')
+        .then(() => console.log('Modo App Activado Correctamente'))
+        .catch(err => console.log('Error al activar Modo App', err));
+}
     </script>
 </body>
 </html>

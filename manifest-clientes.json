@@ -1,0 +1,17 @@
+{
+  "name": "Latente OS - Portal Clientes",
+  "short_name": "Latente OS",
+  "description": "Consulta el estado de tu propiedad en tiempo real",
+  "start_url": "clientes.html",
+  "display": "standalone",
+  "background_color": "#09090b",
+  "theme_color": "#d97706",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "icono-cliente.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}

@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Latente OS - Administrador de Estados</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    
+    <script>
+        const SUPABASE_URL = "https://aypexczsibphswwvyhwr.supabase.co";
+        const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImF5cGV4Y3pzaWJwaHN3d3Z5aHdyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk5ODQ3MzIsImV4cCI6MjA5NTU2MDczMn0.-Dyvg3BJfIz8P49qE5EW9pilfToCcE2NjHu4KML3yeM";
+        const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+    </script>
+</head>
+<body class="min-h-screen bg-[#0A0908] text-[#F9F7F5] font-sans p-6 md:p-12 relative">
+
+    <div id="globoExito" class="fixed top-6 right-6 z-50 transform translate-y-[-20px] opacity-0 pointer-events-none transition-all duration-500 ease-out flex items-center gap-3 bg-[#13110F] border border-emerald-500/40 text-[#F9F7F5] px-5 py-4 rounded-2xl shadow-2xl max-w-sm">
+        <div class="w-8 h-8 rounded-xl bg-emerald-500/10 flex items-center justify-center text-emerald-400 text-base shrink-0">
+            <i class="fa-solid fa-circle-check"></i>
+        </div>
+        <div>
+            <h4 class="text-xs font-bold tracking-wide text-emerald-400 uppercase">¡Subida Exitosa!</h4>
+            <p id="globoMensaje" class="text-[11px] text-[#9E948A] mt-0.5 leading-relaxed">El estado se publicó correctamente.</p>
+        </div>
+    </div>
+
+    <div class="max-w-xl mx-auto">
+        <div class="mb-6">
+            <a href="operaciones.html" class="inline-flex items-center gap-2 text-xs text-[#9E948A] hover:text-[#FF5A1F] transition-colors font-medium">
+                <i class="fa-solid fa-arrow-left"></i> Volver a Operaciones
+            </a>
+        </div>
+
+        <div class="mb-8 border-b border-zinc-800 pb-6">
+            <span class="text-xs font-semibold tracking-widest text-[#FF5A1F] uppercase">Panel Comercial Independiente</span>
+            <h1 class="text-3xl font-bold tracking-wide mt-1">Lanzador de Estados</h1>
+            <p class="text-[#9E948A] text-sm mt-1">Publica anuncios tipo WhatsApp que desaparecen solos en 24 horas.</p>
+        </div>
+
+        <div class="bg-[#13110F] border border-zinc-800 p-6 rounded-2xl shadow-xl">
+            <div class="flex items-center gap-3 mb-6">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-[#FF5A1F] to-[#FF7A00] flex items-center justify-center text-white text-lg">
+                    <i class="fa-solid fa-circle-notch"></i>
+                </div>
+                <div>
+                    <h2 class="text-lg font-bold tracking-wide">Nuevo Estado</h2>
+                    <p class="text-xs text-[#9E948A]">Burbuja activa para el portal de clientes</p>
+                </div>
+            </div>
+            
+            <form id="formEstado" class="space-y-4">
+                <div>
+                    <label class="block text-[11px] font-bold tracking-wider text-[#9E948A] uppercase mb-2">Nombre del Aliado / Marca</label>
+                    <input type="text" id="estadoTitulo" placeholder="Ej. Toallas Premium, Transporte Sáchica" required
+                        class="w-full bg-[#0A0908] border border-zinc-800 rounded-xl px-4 py-3 text-sm text-zinc-200 focus:outline-none focus:border-[#FF5A1F] focus:ring-1 focus:ring-[#FF5A1F] transition-all font-medium" />
+                </div>
+                
+                <div>
+                    <label class="block text-[11px] font-bold tracking-wider text-[#9E948A] uppercase mb-2">Seleccionar Imagen desde Galería</label>
+                    <div class="relative flex items-center justify-center w-full">
+                        <label for="estadoImagenFile" class="flex flex-col items-center justify-center w-full h-32 border-2 border-zinc-800 border-dashed rounded-xl cursor-pointer bg-[#0A0908] hover:border-[#FF5A1F] transition-all p-4 text-center">
+                            <div class="flex flex-col items-center justify-center pt-5 pb-6" id="previewPlaceholder">
+                                <i class="fa-solid fa-images text-2xl text-zinc-600 mb-2" id="iconGaleria"></i>
+                                <p class="text-xs text-zinc-400 font-medium" id="textoGaleria">Toca para abrir tu galería o archivos</p>
+                                <p class="text-[10px] text-zinc-600 mt-1">Formatos aceptados: JPG, PNG, WEBP</p>
+                            </div>
+                            <img id="imgPreview" class="hidden w-full h-full object-contain rounded-lg" />
+                        </label>
+                        <input type="file" id="estadoImagenFile" accept="image/*" class="hidden" onchange="previsualizarYConvertirImagen()" />
+                    </div>
+                </div>
+
+                <button type="button" id="btnPublicar" onclick="subirEstadoReal()" class="w-full mt-4 bg-gradient-to-r from-[#FF5A1F] to-[#FF7A00] text-white font-semibold text-sm py-3.5 rounded-xl flex items-center justify-center gap-2 hover:opacity-90 active:scale-[0.99] transition-all cursor-pointer shadow-lg disabled:opacity-50 disabled:cursor-not-allowed">
+                    <i id="btnIcono" class="fa-solid fa-rocket"></i> <span id="btnTexto">Publicar en Latente OS</span>
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        let imagenBase64Definitiva = "";
+
+        function previsualizarYConvertirImagen() {
+            const archivoInput = document.getElementById('estadoImagenFile');
+            const archivo = archivoInput.files[0];
+            
+            const placeholder = document.getElementById('previewPlaceholder');
+            const imgPreview = document.getElementById('imgPreview');
+            const textoGaleria = document.getElementById('textoGaleria');
+            const iconGaleria = document.getElementById('iconGaleria');
+
+            if (archivo) {
+                if (archivo.size > 2 * 1024 * 1024) {
+                    alert("La foto está muy pesada socio, intenta con una de menos de 2MB para que cargue rápido.");
+                    archivoInput.value = "";
+                    return;
+                }
+
+                const lector = new FileReader();
+                
+                lector.onload = function(evento) {
+                    imagenBase64Definitiva = evento.target.result;
+                    
+                    iconGaleria.classList.add('hidden');
+                    textoGaleria.classList.add('hidden');
+                    placeholder.classList.remove('pt-5', 'pb-6');
+                    
+                    imgPreview.src = imagenBase64Definitiva;
+                    imgPreview.classList.remove('hidden');
+                };
+
+                lector.readAsDataURL(archivo);
+            }
+        }
+
+        function mostrarGloboFlotante(marca) {
+            const globo = document.getElementById('globoExito');
+            const mensaje = document.getElementById('globoMensaje');
+            
+            mensaje.innerText = `El estado de "${marca}" se publicó con éxito en el portal.`;
+            
+            globo.classList.remove('translate-y-[-20px]', 'opacity-0', 'pointer-events-none');
+            globo.classList.add('translate-y-0', 'opacity-100');
+
+            setTimeout(() => {
+                globo.classList.remove('translate-y-0', 'opacity-100');
+                globo.classList.add('translate-y-[-20px]', 'opacity-0', 'pointer-events-none');
+            }, 4000);
+        }
+
+        async function subirEstadoReal() {
+            const titulo = document.getElementById('estadoTitulo').value.trim();
+            
+            // Referencias del botón para controlar el estado de carga
+            const btnPublicar = document.getElementById('btnPublicar');
+            const btnTexto = document.getElementById('btnTexto');
+            const btnIcono = document.getElementById('btnIcono');
+
+            if (!titulo || !imagenBase64Definitiva) {
+                alert("Rellena el nombre y selecciona una imagen de la galería socio.");
+                return;
+            }
+
+            try {
+                // 1. BLOQUEO INMEDIATO: Deshabilitamos el botón y cambiamos el estado visual
+                btnPublicar.disabled = true;
+                btnTexto.innerText = "Publicando...";
+                btnIcono.className = "fa-solid fa-spinner animate-spin"; // Icono de carga girando
+
+                // 2. Ejecutar inserción en Supabase
+                const { data, error } = await supabaseClient
+                    .from('publicidad_estados')
+                    .insert([{ titulo: titulo, url_imagen: imagenBase64Definitiva }]);
+
+                if (error) throw error;
+
+                // 3. Éxito: lanzar el globo estético
+                mostrarGloboFlotante(titulo);
+                
+                // Limpiar formulario y componentes de imagen
+                document.getElementById('formEstado').reset();
+                imagenBase64Definitiva = "";
+                document.getElementById('imgPreview').classList.add('hidden');
+                document.getElementById('imgPreview').src = "";
+                document.getElementById('iconGaleria').classList.remove('hidden');
+                document.getElementById('textoGaleria').classList.remove('hidden');
+                document.getElementById('previewPlaceholder').classList.add('pt-5', 'pb-6');
+
+            } catch (err) {
+                console.error("Error al subir estado:", err);
+                alert("Hubo un error al conectar con Supabase. Revisa la consola.");
+            } finally {
+                // 4. DESBLOQUEO TRAS TERMINAR EL PROCESO (sea éxito o error)
+                btnPublicar.disabled = false;
+                btnTexto.innerText = "Publicar en Latente OS";
+                btnIcono.className = "fa-solid fa-rocket";
+            }
+        }
+    </script>
+</body>
+</html>
