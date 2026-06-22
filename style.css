@@ -1,53 +1,92 @@
-/* Paleta Latente Fire: Lujo, Fuego Mediterráneo y Alta Gama */
+/* =============================================================
+   SISTEMA DE DISEÑO PREMIUM - LATENTE (QUIET LUXURY)
+   100% RESPONSIVO, ADAPTATIVO Y ANTIDISTORSIÓN GLOBAL
+   ============================================================= */
 :root {
-    --bg-dark: #0A0908;       /* Negro carbón orgánico */
-    --surface-card: #13110F;  /* Arcilla oscura */
-    --text-light: #F9F7F5;    /* Blanco lino puro */
-    --text-muted: #9E948A;    /* Arena tostada */
-    --fire-orange: #FF5A1F;   /* Naranja fuego puro */
+    --bg-dark: #0A0908;         /* Negro carbón orgánico absoluto */
+    --surface-card: #13110F;    /* Arcilla y bronce quemado ultra oscuro */
+    --text-light: #F9F7F5;      /* Blanco lino texturizado */
+    --text-muted: #8E867E;      /* Arena atenuada para jerarquía secundaria */
+    --fire-orange: #FF5A1F;     /* Naranja fuego de la marca */
+    --accent-gold: #D4A373;     /* Toque oro viejo para detalles tipográficos */
     --fire-gradient: linear-gradient(135deg, #FF7A00 0%, #FF3D00 100%);
-    --accent-gold: #E0A96D;   /* Destello dorado/tierra */
-    --border-subtle: rgba(255, 90, 31, 0.08); /* Bordes con reflejo de fuego */
 }
 
+/* --- RESETEO ANTI-DESBORDE --- */
 * {
     box-sizing: border-box;
     margin: 0;
     padding: 0;
 }
 
-body {
-    font-family: 'Inter', sans-serif;
+html, body {
+    width: 100%;
+    max-width: 100%;
+    overflow-x: hidden; /* Elimina por completo el scroll horizontal en celulares */
+    position: relative;
     background-color: var(--bg-dark);
     color: var(--text-light);
+    font-family: 'Inter', sans-serif;
     line-height: 1.6;
     -webkit-font-smoothing: antialiased;
-    overflow-x: hidden;
-    position: relative;
 }
 
-/* Burbuja Flotante de Éxito Premium (Toast Notification) */
+/* --- CONTENEDOR FLUIDO INTELIGENTE --- */
+.container {
+    width: 100%;
+    max-width: 1260px;
+    margin: 0 auto;
+    padding: 0 20px 60px 20px; /* Margen adaptativo ideal para pantallas táctiles */
+    position: relative;
+    z-index: 1;
+}
+
+/* --- ILUMINACIÓN CINEASTA EN CAPAS --- */
+.fire-glow-top {
+    position: absolute;
+    top: -10vh;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100vw;
+    height: 60vh;
+    background: radial-gradient(circle, rgba(255, 90, 31, 0.04) 0%, rgba(10, 9, 8, 0) 70%);
+    z-index: 0;
+    pointer-events: none;
+}
+
+.fire-glow-bottom {
+    position: absolute;
+    bottom: -10vh;
+    right: -10vw;
+    width: 60vw;
+    height: 60vh;
+    background: radial-gradient(circle, rgba(255, 122, 0, 0.02) 0%, rgba(10, 9, 8, 0) 70%);
+    z-index: 0;
+    pointer-events: none;
+}
+
+/* --- TOAST NOTIFICATION RESPONSIVO --- */
 .toast-notification {
     position: fixed;
-    top: 30px;
-    right: 30px;
-    background: rgba(19, 17, 15, 0.85); /* Transparencia de lujo */
-    backdrop-filter: blur(12px);         /* Efecto cristal esmerilado */
-    -webkit-backdrop-filter: blur(12px);
-    border: 1px solid rgba(255, 90, 31, 0.3); /* Borde fuego sutil */
-    padding: 16px 24px;
+    top: 20px;
+    left: 20px;
+    right: 20px; /* Se expande a lo ancho en celulares para no salirse */
+    background: rgba(19, 17, 15, 0.95);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 90, 31, 0.25);
+    padding: 16px 20px;
     border-radius: 8px;
     z-index: 9999;
-    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6), 0 0 30px rgba(255, 90, 31, 0.05);
-    transform: translateY(-100px) scale(0.9);
+    box-shadow: 0 30px 60px rgba(0,0,0,0.8);
+    transform: translateY(-150px);
     opacity: 0;
     visibility: hidden;
-    transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); /* Rebote dinámico */
+    transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-/* Clase activada por JavaScript */
 .toast-notification.show-toast {
-    transform: translateY(0) scale(1);
+    transform: translateY(0);
     opacity: 1;
     visibility: visible;
 }
@@ -55,228 +94,349 @@ body {
 .toast-content {
     display: flex;
     align-items: center;
-    gap: 16px;
-}
-
-.toast-icon {
-    font-size: 1.6rem;
-    filter: drop-shadow(0 2px 8px rgba(255, 90, 31, 0.4));
+    gap: 12px;
 }
 
 .toast-text h4 {
-    font-weight: 600;
-    font-size: 0.95rem;
-    color: var(--text-light);
-    letter-spacing: 0.5px;
-    margin-bottom: 2px;
+    font-size: 0.9rem;
+    font-weight: 500;
 }
 
 .toast-text p {
-    font-size: 0.85rem;
+    font-size: 0.8rem;
     color: var(--text-muted);
-    font-weight: 300;
 }
 
-/* Efectos de Iluminación Ambiental (Atardecer encendido) */
-.fire-glow-top {
-    position: absolute;
-    top: -15vh;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 90vw;
-    height: 70vh;
-    background: radial-gradient(circle, rgba(255, 90, 31, 0.08) 0%, rgba(255, 61, 0, 0.01) 60%, rgba(10, 9, 8, 0) 100%);
-    z-index: 0;
-    pointer-events: none;
-}
-
-.fire-glow-bottom {
-    position: absolute;
-    bottom: 5vh;
-    right: -10vw;
-    width: 50vw;
-    height: 50vh;
-    background: radial-gradient(circle, rgba(255, 122, 0, 0.04) 0%, rgba(10, 9, 8, 0) 70%);
-    z-index: 0;
-    pointer-events: none;
-}
-
-.container {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 80px 24px;
-    position: relative;
-    z-index: 1;
-}
-
-/* Header */
-header {
+/* --- HEADER FLEX (Menú Limpio en Celular) --- */
+.flex-header {
     display: flex;
-    justify-content: space-between;
+    flex-direction: column; /* Apilado en celulares para que no se pisen */
+    gap: 20px;
     align-items: center;
-    margin-bottom: 100px;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.02);
-    padding-bottom: 24px;
+    padding: 30px 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+    margin-bottom: 50px;
+    text-align: center;
+}
+
+.logo-group {
+    display: flex;
+    flex-direction: column; /* Centrado editorial */
+    align-items: center;
+    gap: 6px;
 }
 
 .logo {
     font-family: 'Cormorant Garamond', serif;
-    font-size: 2.4rem;
+    font-size: 1.8rem;
     font-weight: 300;
-    letter-spacing: 7px;
+    letter-spacing: 6px;
     text-transform: uppercase;
-    background: var(--fire-gradient);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
+    color: var(--text-light);
 }
 
 .tagline-top {
-    font-size: 0.75rem;
+    font-size: 0.6rem;
     text-transform: uppercase;
     letter-spacing: 3px;
     color: var(--text-muted);
 }
 
-/* Hero Section */
+.nav-buttons-group {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    width: 100%;
+    justify-content: center; /* Distribución balanceada */
+}
+
+.nav-btn-nosotros {
+    color: var(--text-muted);
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+.nav-btn-politicas {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    color: var(--text-light);
+    padding: 8px 16px;
+    border-radius: 50px;
+    font-size: 0.65rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    text-decoration: none;
+}
+
+/* --- HERO SECTION (Tipografía Elástica) --- */
 .hero {
     text-align: center;
-    max-width: 900px;
-    margin: 0 auto 120px auto;
+    max-width: 100%;
+    margin: 0 auto 80px auto;
 }
 
 .badge {
     display: inline-block;
-    font-size: 0.7rem;
+    font-size: 0.6rem;
     text-transform: uppercase;
     letter-spacing: 3px;
-    color: var(--fire-orange);
-    border: 1px solid rgba(255, 90, 31, 0.25);
-    padding: 6px 18px;
-    border-radius: 50px;
-    margin-bottom: 32px;
-    background: rgba(255, 90, 31, 0.03);
-    font-weight: 600;
+    color: var(--accent-gold);
+    margin-bottom: 24px;
+    font-weight: 500;
 }
 
 .hero h1 {
     font-family: 'Cormorant Garamond', serif;
-    font-size: 4.2rem;
+    /* Escalado dinámico: no se desborda jamás en celulares */
+    font-size: clamp(2.2rem, 8vw, 4.5rem); 
     font-weight: 300;
     line-height: 1.15;
-    margin-bottom: 28px;
+    margin-bottom: 24px;
     letter-spacing: -0.5px;
 }
 
 .hero p {
-    font-size: 1.25rem;
-    font-weight: 200;
+    font-size: clamp(0.95rem, 3vw, 1.15rem);
+    font-weight: 300;
     color: var(--text-muted);
-    max-width: 750px;
-    margin: 0 auto;
+    line-height: 1.6;
 }
 
-/* Cards de Características */
-.features {
+/* --- SECCIÓN 1: INTRODUCCIÓN VISUAL (Bloque Elástico) --- */
+.visual-introduction {
+    display: flex;
+    flex-direction: column; /* Columna nativa para celulares */
+    background: #0E0D0C;
+    border: 1px solid rgba(255, 255, 255, 0.02);
+    border-radius: 6px;
+    overflow: hidden;
+    margin-bottom: 80px;
+    width: 100%;
+}
+
+.intro-image-wrapper {
+    width: 100%;
+    height: 240px; /* Altura controlada en móviles */
+    filter: grayscale(100%) contrast(110%);
+    opacity: 0.4;
+}
+
+.intro-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.intro-text {
+    padding: 30px 20px;
+    width: 100%;
+}
+
+.intro-text h2 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(1.6rem, 5vw, 2.4rem);
+    font-weight: 300;
+    margin-bottom: 16px;
+}
+
+.serif-quote {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(1.1rem, 4vw, 1.4rem);
+    font-style: italic;
+    color: var(--text-muted);
+}
+
+/* --- SECCIÓN 2: CARACTERÍSTICAS (Lista Vertical en Celular) --- */
+.features-section-wrapper {
+    margin-bottom: 80px;
+    width: 100%;
+}
+
+.features-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-    gap: 32px;
-    margin-bottom: 140px;
+    grid-template-columns: 1fr; /* Una sola columna fluida en celular */
+    gap: 20px;
+    width: 100%;
 }
 
 .feature-card {
     background-color: var(--surface-card);
-    border: 1px solid var(--border-subtle);
-    padding: 48px 40px;
-    border-radius: 8px;
-    transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-.feature-card:hover {
-    transform: translateY(-8px);
-    border-color: rgba(255, 90, 31, 0.35);
-    box-shadow: 0 20px 50px rgba(255, 90, 31, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.01);
+    padding: 30px 24px;
+    border-radius: 4px;
 }
 
 .icon-wrapper {
-    width: 44px;
-    height: 44px;
+    width: 24px;
+    height: 24px;
     color: var(--fire-orange);
-    margin-bottom: 32px;
+    margin-bottom: 20px;
 }
 
 .feature-card h3 {
     font-family: 'Cormorant Garamond', serif;
-    font-size: 1.8rem;
+    font-size: 1.5rem;
     font-weight: 300;
-    margin-bottom: 16px;
-    letter-spacing: 0.5px;
+    margin-bottom: 12px;
 }
 
 .feature-card p {
-    font-size: 0.95rem;
-    font-weight: 300;
+    font-size: 0.9rem;
     color: var(--text-muted);
-    line-height: 1.7;
+    line-height: 1.6;
 }
 
-/* Formulario con Inyección de Fuego */
-.registration-section {
-    background: linear-gradient(145deg, #14110F 0%, #0A0908 100%);
-    padding: 80px 60px;
-    border-radius: 12px;
-    max-width: 700px;
-    margin: 0 auto;
-    border: 1px solid var(--border-subtle);
-    box-shadow: 0 40px 100px rgba(0,0,0,0.8);
-    position: relative;
+/* --- SECCIÓN 3: PORTFOLIO (Carrusel Apilado Seguro) --- */
+.portfolio-section {
+    margin-bottom: 80px;
+    width: 100%;
+}
+
+.portfolio-header h2 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(1.8rem, 6vw, 2.8rem);
+    font-weight: 300;
+    text-align: center;
+    margin-bottom: 40px;
+}
+
+.portfolio-carousel {
+    display: grid;
+    grid-template-columns: 1fr; /* Apilado perfecto en vertical para celular */
+    gap: 20px;
+    width: 100%;
+}
+
+.portfolio-item {
+    border-radius: 4px;
+    overflow: hidden;
+    height: 280px; /* Proporción compacta para celular */
+    filter: grayscale(30%) brightness(80%);
+}
+
+.portfolio-item img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.testimonial-item {
+    background: #0E0D0C;
+    border: 1px solid rgba(255, 255, 255, 0.02);
+    padding: 30px 20px;
+}
+
+.testimonial-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    width: 100%;
+}
+
+.testimonial-content .avatar {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    margin-bottom: 16px;
+    filter: grayscale(100%);
+}
+
+.testimonial-content .quote {
+    font-size: 0.88rem;
+    font-weight: 300;
+    line-height: 1.7;
+    margin-bottom: 16px;
+}
+
+.signature {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.6rem;
+    color: var(--accent-gold);
+}
+
+.carousel-dots {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 24px;
+}
+
+.dot {
+    width: 5px;
+    height: 5px;
+    background: rgba(255, 255, 255, 0.15);
+    border-radius: 50%;
+}
+
+.dot.active {
+    background: var(--text-light);
+}
+
+/* --- SECCIÓN 4: REGISTRO + MAPA (Cierre Sin Deformaciones) --- */
+.registration-split-container {
+    display: flex;
+    flex-direction: column; /* Apilado nativo en móvil */
+    gap: 30px;
+    background: var(--surface-card);
+    border: 1px solid rgba(255, 255, 255, 0.02);
+    border-radius: 6px;
+    padding: 30px 20px;
+    margin-bottom: 40px;
+    width: 100%;
+}
+
+.registration-form-block {
+    width: 100%;
 }
 
 .form-header {
-    text-align: center;
-    margin-bottom: 50px;
+    margin-bottom: 24px;
 }
 
-.form-header h2 {
+.form-badge {
+    font-size: 0.6rem;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: var(--accent-gold);
+    display: block;
+    margin-bottom: 8px;
+}
+
+.registration-form-block h2 {
     font-family: 'Cormorant Garamond', serif;
-    font-size: 2.5rem;
+    font-size: 1.8rem;
     font-weight: 300;
-    margin-bottom: 12px;
-    letter-spacing: 0.5px;
 }
 
-.form-header p {
-    font-size: 1rem;
-    font-weight: 300;
-    color: var(--text-muted);
-}
-
-/* Campos de entrada */
 .form-group {
-    margin-bottom: 36px;
+    margin-bottom: 24px;
 }
 
 .form-group label {
     display: block;
-    font-size: 0.75rem;
+    font-size: 0.65rem;
     text-transform: uppercase;
-    letter-spacing: 2px;
-    margin-bottom: 12px;
-    font-weight: 600;
+    letter-spacing: 1px;
     color: var(--text-muted);
-    transition: color 0.3s ease;
+    margin-bottom: 6px;
 }
 
 .form-control {
     width: 100%;
-    padding: 16px 0;
-    background-color: transparent;
+    padding: 10px 0;
+    background: transparent;
     border: none;
-    border-bottom: 1px solid rgba(255, 90, 31, 0.2);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
     font-family: 'Inter', sans-serif;
-    font-size: 1.1rem;
-    font-weight: 300;
+    font-size: 0.95rem;
     color: var(--text-light);
-    transition: all 0.3s ease;
     border-radius: 0;
 }
 
@@ -285,217 +445,167 @@ header {
     border-bottom-color: var(--fire-orange);
 }
 
-.form-group:focus-within label {
-    color: var(--fire-orange);
-}
-
-/* Botón de Fuego Líquido */
 .btn-submit {
     width: 100%;
-    padding: 22px;
-    background: var(--fire-gradient);
-    color: var(--text-light);
-    border: none;
+    padding: 16px;
+    background: transparent;
+    border: 1px solid rgba(255, 90, 31, 0.3);
+    color: var(--fire-orange);
     font-family: 'Inter', sans-serif;
-    font-size: 0.9rem;
-    font-weight: 600;
+    font-size: 0.75rem;
     text-transform: uppercase;
-    letter-spacing: 3px;
+    letter-spacing: 2px;
+    font-weight: 600;
     cursor: pointer;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 12px;
-    transition: all 0.4s ease;
-    margin-top: 20px;
-    box-shadow: 0 8px 25px rgba(255, 61, 0, 0.2);
-}
-
-.btn-submit .arrow {
-    width: 18px;
-    height: 18px;
-    transition: transform 0.3s ease;
+    transition: all 0.3s ease;
 }
 
 .btn-submit:hover {
-    transform: scale(1.01);
-    box-shadow: 0 12px 35px rgba(255, 61, 0, 0.4);
+    background: var(--fire-orange);
+    color: var(--text-light);
 }
 
-.btn-submit:hover .arrow {
-    transform: translateX(8px);
+/* El mapa mantiene aspecto cinemático 16:9 exacto en celulares */
+.registration-map-block {
+    width: 100%;
+    background: #0A0908;
+    border-radius: 4px;
+    overflow: hidden;
 }
 
-/* Footer */
-footer {
-    margin-top: 140px;
+.map-placeholder {
+    width: 100%;
+    position: relative;
+    aspect-ratio: 16 / 9; /* Cero distorsiones de mapa en celulares */
+}
+
+.map-placeholder iframe {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border: 0;
+    display: block;
+    filter: grayscale(100%) invert(92%) contrast(120%) hue-rotate(15deg);
+    opacity: 0.75;
+}
+
+/* --- SECCIÓN 5: NOTA DE TARIFAS --- */
+.price-notice-wide {
     text-align: center;
+    width: 100%;
+    margin: 0 auto 60px auto;
+}
+
+.price-notice-wide p {
     font-size: 0.75rem;
+    color: var(--text-muted);
+    line-height: 1.6;
+}
+
+/* --- SECCIÓN 6: MARCAS --- */
+.brands-section {
+    text-align: center;
+    margin-bottom: 60px;
+    width: 100%;
+}
+
+.brands-title {
+    font-size: 0.55rem;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: var(--text-muted);
+    display: block;
+    margin-bottom: 24px;
+}
+
+.brands-logos {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    gap: 20px 30px; /* Fluye orgánicamente en celulares */
+    font-size: 0.65rem;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: rgba(255, 255, 255, 0.3);
+}
+
+/* --- FOOTER --- */
+footer {
+    text-align: center;
+    font-size: 0.6rem;
     color: var(--text-muted);
     letter-spacing: 3px;
     border-top: 1px solid rgba(255, 255, 255, 0.02);
-    padding-top: 40px;
-}
-
-/* Responsivo */
-@media (max-width: 768px) {
-    .hero h1 { font-size: 2.8rem; }
-    .container { padding: 60px 16px; }
-    .registration-section { padding: 50px 24px; }
-}
-.price-notice {
-    grid-column: 1 / -1; /* Ocupa todo el ancho en la rejilla */
-    max-width: 800px;    /* Evita que se estire demasiado en pantallas grandes */
-    margin: 32px auto 0 auto; /* El 'auto' a los lados lo centra perfectamente en la pantalla */
-    background: rgba(24, 24, 27, 0.6);
-    border: 1px solid rgba(63, 63, 70, 0.4);
-    border-radius: 12px;
-    padding: 16px 20px;
-    text-align: center;  /* Centra el texto y el badge por dentro */
-}
-/* Alinea el logo a la izquierda y el botón a la derecha */
-.flex-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 20px 0;
-    border-bottom: 1px solid rgba(63, 63, 70, 0.2);
-    margin-bottom: 40px;
-}
-
-.logo-group {
-    display: flex;
-    align-items: baseline;
-    gap: 12px; /* Espacio entre Latente y Boutique Operations OS */
-}
-
-/* Estilo premium del botón */
-.nav-btn-politicas {
-    display: inline-flex;
-    align-items: center;
-    background: rgba(24, 24, 27, 0.6);
-    border: 1px solid rgba(63, 63, 70, 0.5);
-    color: #e4e4e7;
-    padding: 6px 14px;
-    border-radius: 8px;
-    font-size: 11px;
-    font-weight: 500;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-    text-decoration: none;
-    transition: all 0.2s ease-in-out;
-}
-
-.nav-btn-politicas svg {
-    width: 14px;
-    height: 14px;
-    color: #f59e0b; /* Color ámbar para el escudo */
-    margin-right: 6px;
-}
-
-/* Efectos Hover */
-.nav-btn-politicas:hover {
-    background: rgba(39, 39, 42, 0.8);
-    border-color: rgba(245, 158, 11, 0.4);
-    color: #ffffff;
-    box-shadow: 0 0 12px rgba(245, 158, 11, 0.1);
-    transform: translateY(-1px);
-}
-/* Contenedor de los botones del header */
-.nav-buttons-group {
-    display: flex;
-    align-items: center;
-    gap: 12px; /* Separación perfecta entre ambos botones */
-}
-
-/* Estilo para el botón de Quiénes Somos */
-.nav-btn-nosotros {
-    display: inline-flex;
-    align-items: center;
-    background: transparent;
-    border: 1px solid transparent;
-    color: #a1a1aa; /* Color gris suave */
-    padding: 6px 12px;
-    border-radius: 8px;
-    font-size: 11px;
-    font-weight: 500;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-    text-decoration: none;
-    transition: all 0.2s ease-in-out;
-}
-
-/* Hover del botón Quiénes Somos */
-.nav-btn-nosotros:hover {
-    color: #ffffff; /* Brilla a blanco */
-    background: rgba(39, 39, 42, 0.4);
-    border-color: rgba(63, 63, 70, 0.3);
-}
-
-/* Re-asegurar los estilos de la cabecera flex */
-.flex-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 20px 0;
-    margin-bottom: 40px;
-}
-
-.logo-group {
-    display: flex;
-    align-items: baseline;
-    gap: 12px;
-}
-/* Contenedor para los botones del header */
-.nav-buttons-group {
-    display: flex;
-    align-items: center;
-    gap: 16px; /* Espacio entre los dos botones */
-}
-/* ========================================================
-   ESTILOS RESPONSIVE Y FLEXBOX (Mundo Celular y Computador)
-   ======================================================== */
-
-/* Configuración base para CELULARES (Por defecto) */
-.main-content {
-    display: flex;
-    flex-direction: column; /* Un bloque debajo del otro */
-    gap: 40px;              /* Separación elegante entre el formulario y los features */
+    padding-top: 30px;
     width: 100%;
 }
 
-.registration-section, .features {
-    width: 100%;
-}
-
-/* Forzar que las tarjetas de características se apilen bien en celular */
-.features {
-    display: flex;
-    flex-direction: column;
-    gap: 24px;
-}
-
-/* Configuración para COMPUTADORES (Pantallas de 992px o más) */
-@media (min-width: 992px) {
-    .main-content {
-        flex-direction: row;       /* Se ponen uno al lado del otro */
-        align-items: flex-start;  /* Alineación limpia arriba */
-        gap: 60px;                 /* Más espacio de separación en monitores */
+/* =============================================================
+   REGLAS RESPONSIVE AVANZADAS (PASES DE MAGIA PARA MONITORES)
+   ============================================================= */
+@media (min-width: 768px) {
+    .flex-header {
+        flex-direction: row;
+        justify-content: space-between;
+        text-align: left;
+        padding: 40px 0;
     }
 
-    .registration-section {
-        flex: 1;                   /* El formulario toma la mitad del espacio */
-        margin-bottom: 0 !important; /* Quitamos el margen viejo para que no rompa el diseño */
+    .logo-group {
+        flex-direction: row;
+        align-items: baseline;
+        gap: 14px;
     }
 
-    .features {
-        flex: 1.2;                 /* Las características toman un poco más de ancho */
-        display: grid;             /* Volvemos a su distribución en grilla si la tenías */
+    .logo { font-size: 2.2rem; }
+    .tagline-top { font-size: 0.65rem; }
+    .nav-buttons-group { width: auto; justify-content: flex-end; gap: 24px; }
+    .nav-btn-politicas { padding: 10px 20px; font-size: 0.72rem; }
+
+    .features-grid {
         grid-template-columns: repeat(2, 1fr);
-        gap: 24px;
     }
-    
-    .price-notice {
-        grid-column: span 2;       /* La nota importante abarca todo el ancho de la grilla */
+}
+
+@media (min-width: 1024px) {
+    .container { padding: 0 40px 100px 40px; }
+    .flex-header { margin-bottom: 90px; }
+    .hero { margin: 0 auto 120px auto; }
+
+    /* Introducción Visual horizontal en monitores */
+    .visual-introduction {
+        flex-direction: row;
+        height: 480px;
+        margin-bottom: 120px;
     }
+    .intro-image-wrapper { width: 50%; height: 100%; }
+    .intro-text { width: 50%; padding: 80px; }
+
+    /* Grillas perfectas de 3 columnas */
+    .features-section-wrapper { margin-bottom: 120px; }
+    .features-grid { grid-template-columns: repeat(3, 1fr); gap: 40px; }
+
+    .portfolio-section { margin-bottom: 140px; }
+    .portfolio-carousel { grid-template-columns: repeat(3, 1fr); gap: 24px; }
+    .portfolio-item { height: 450px; }
+    .testimonial-item { padding: 50px 40px; }
+
+    /* Registro Split en pantallas grandes */
+    .registration-split-container {
+        flex-direction: row;
+        padding: 60px;
+        gap: 60px;
+        align-items: stretch;
+        margin-bottom: 60px;
+    }
+    .registration-form-block { width: 45%; }
+    .registration-map-block { width: 55%; display: flex; }
+    .map-placeholder { aspect-ratio: auto; width: 100%; height: 100%; min-height: 450px; }
+
+    .price-notice-wide { margin: 0 auto 100px auto; }
+    .brands-section { margin-bottom: 100px; }
+    .brands-logos { gap: 40px 60px; font-size: 0.75rem; }
 }
