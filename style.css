@@ -609,3 +609,80 @@ footer {
     .brands-section { margin-bottom: 100px; }
     .brands-logos { gap: 40px 60px; font-size: 0.75rem; }
 }
+/* =============================================================
+   FIN DEL SISTEMA DE DISEÑO PREMIUM - LATENTE (QUIET LUXURY)
+   ============================================================= */
+ /* Contenedor del título sin cortes */
+.form-title {
+    font-size: 1.8rem !important;
+    line-height: 1.3 !important;
+    color: #ffffff !important;
+    margin-bottom: 2rem;
+    font-family: inherit;
+}
+
+/* Forzar Inputs oscuros y elegantes estilo Quiet Luxury */
+.form-control-premium {
+    width: 100% !important;
+    background: transparent !important;
+    background-color: transparent !important;
+    border: none !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2) !important;
+    color: #ffffff !important;
+    padding: 10px 0 !important;
+    font-size: 1rem !important;
+    border-radius: 0 !important;
+    outline: none !important;
+    box-shadow: none !important;
+    transition: border-color 0.3s ease;
+}
+
+/* Evita que el autocompletado del navegador lo vuelva a poner blanco */
+.form-control-premium:-webkit-autofill,
+.form-control-premium:-webkit-autofill:hover, 
+.form-control-premium:-webkit-autofill:focus {
+    -webkit-text-fill-color: #ffffff !important;
+    -webkit-box-shadow: 0 0 0px 1000px #111111 inset !important; /* Fondo oscuro del input */
+    transition: background-color 5000s ease-in-out 0s;
+}
+
+.form-control-premium:focus {
+    border-bottom: 1px solid #ff4500 !important; /* Línea naranja al escribir */
+}
+
+.form-group label {
+    font-size: 0.75rem !important;
+    letter-spacing: 1px !important;
+    color: #888888 !important;
+    margin-bottom: 5px;
+    display: block;
+}
+
+/* Botón estilizado */
+.btn-submit-premium {
+    width: 100%;
+    background: transparent;
+    border: 1px solid #ff4500;
+    padding: 1.2rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    color: #ff4500;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-size: 0.85rem;
+    cursor: pointer;
+    margin-top: 2rem;
+    transition: all 0.3s ease;
+}
+
+.btn-submit-premium:hover {
+    background: #ff4500;
+    color: #000000;
+}
+
+.arrow-icon {
+    width: 20px;
+    height: 20px;
+}

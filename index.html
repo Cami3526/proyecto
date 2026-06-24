@@ -117,78 +117,144 @@
             </div>
         </section>
 
-        <section class="registration-split-container">
+       <section class="registration-split-container">
+    
+    <!-- AQUI TU FORMULARIO -->
+<section class="registration-split-container">
+    <div class="registration-form-block">
+        <div class="form-header">
+            <span class="form-badge">REGISTRATION</span>
+            <h2 class="form-title">Inicie la evolución de su propiedad</h2>
+        </div>
+
+        <form id="latenteForm" class="premium-form">
+            <div class="form-group">
+                <label for="nombre">NOMBRE DE LA PROPIEDAD</label>
+                <input type="text" id="nombre" class="form-control-premium" placeholder="Ej. Casa Almar Boutique" required>
+            </div>
             
-            <div class="registration-form-block">
-                <div class="form-header">
-                    <span class="form-badge">Registration</span>
-                    <h2>Inicie la evolución de su propiedad</h2>
-                </div>
-                <form id="registrationForm">
-                    <div class="form-group">
-                        <label>Nombre de la Propiedad</label>
-                        <input type="text" class="form-control" placeholder="Ej. Casa Almar Boutique" required>
-                    </div>
-                    <div class="form-group">
-                        <label>Ubicación Geográfica</label>
-                        <input type="text" class="form-control" placeholder="Ej. Sáchica, Boyacá, Dirección" required>
-                    </div>
-                    <div class="form-group">
-                        <label>Línea Directa de Contacto</label>
-                        <input type="tel" class="form-control" placeholder="Ej. +57300 0000000" required>
-                    </div>
-                    <button type="submit" class="btn-submit">
-                        <span>Registration</span>
-                    </button>
-                </form>
+            <div class="form-group">
+                <label for="ubicacion">UBICACIÓN GEOGRÁFICA</label>
+                <input type="text" id="ubicacion" class="form-control-premium" placeholder="Ej. Sáchica, Boyacá, Dirección" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="telefono">LÍNEA DIRECTA DE CONTACTO</label>
+                <input type="tel" id="telefono" class="form-control-premium" placeholder="Ej. +57300 0000000" required>
             </div>
 
-           <div class="registration-map-block">
-    <div class="map-placeholder" style="width: 100%; height: 100%; min-height: 350px;">
+            <button type="submit" class="btn-submit-premium">
+                <span>Solicitar Acceso Privado</span>
+                <svg class="arrow-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                    <path d="M5 12h14M12 5l7 7-7 7"/>
+                </svg>
+            </button>
+        </form>
+    </div>
+
+    <div class="registration-map-block">
         <iframe 
-            src="https://maps.google.com/maps?q=S%C3%A1chica,%20Boyac%C3%A1&t=&z=15&ie=UTF8&iwloc=&output=embed" 
+            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3971.2173177699914!2d-73.5517173!3d5.5346419!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x8e41416bf9b8417b%3A0x7d6b38cc4f72ff7e!2zU8OhY2hpY2EsIEJveWFjw6E!5e0!3m2!1ses!2sco!4v1719183000000!5m2!1ses!2sco" 
             width="100%" 
             height="100%" 
-            style="border:0; min-height: 350px; display: block; filter: grayscale(100%) invert(92%) contrast(120%) hue-rotate(15deg); opacity: 0.75;" 
+            style="border:0; filter: grayscale(100%) invert(90%) contrast(100%);" 
             allowfullscreen="" 
             loading="lazy" 
             referrerpolicy="no-referrer-when-downgrade">
         </iframe>
     </div>
-</div>
-        </section>
+</section>
 
-        <div class="price-notice-wide">
-            <p><strong>Nota Importante:</strong> Las tarifas de los servicios and planes son de referencia. Los costos finales pueden variar y ajustarse de manera personalizada dependiendo de las dimensiones del predio, la ubicación geográfica y los requerimientos específicos de cada propiedad.</p>
-        </div>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-        <section class="brands-section">
-            <span class="brands-title">As Seen In</span>
-            <div class="brands-logos">
-                <span>Lineetlengresses</span>
-                <span>LUXURY TRAVEL</span>
-                <span>Luxury Travel</span>
-                <span>LUXURY TRAVEL</span>
-                <span>LUXURY RESORT</span>
-            </div>
-        </section>
+<script>
+    const SUPABASE_URL = 'https://aypexczsibphswwvyhwr.supabase.co'; 
+    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImF5cGV4Y3pzaWJwaHN3d3Z5aHdyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk5ODQ3MzIsImV4cCI6MjA5NTU2MDczMn0.-Dyvg3BJfIz8P49qE5EW9pilfToCcE2NjHu4KML3yeM'; 
+    const URL_MAKE = 'https://hook.eu1.make.com/vqmnyx963qhwsl5wcnh1ten8dfcveq73'; 
+    
+    let _supabase;
 
-        <footer>
-            <p>&copy; 2026 LATENTE. QUIET LUXURY OPERATIONS. ALL RIGHTS RESERVED.</p>
-        </footer>
+    window.addEventListener('DOMContentLoaded', () => {
+        if (typeof supabase !== 'undefined') {
+            _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+            console.log("Supabase conectado y listo con la nueva política.");
+        }
+    });
 
-    </div>
+    let formularioEnProceso = false;
 
-    <script>
-        document.getElementById('registrationForm').addEventListener('submit', function(e) {
-            e.preventDefault();
+    document.getElementById('latenteForm').addEventListener('submit', async function(e) {
+        e.preventDefault(); 
+
+        if (formularioEnProceso) return;
+        formularioEnProceso = true;
+
+        const botonEnvio = e.target.querySelector('button[type="submit"]');
+        if (botonEnvio) {
+            botonEnvio.disabled = true;
+            botonEnvio.innerHTML = "<span>REGISTRANDO...</span>";
+        }
+
+        const nombreForm = document.getElementById('nombre').value.trim();
+        const ubicacionForm = document.getElementById('ubicacion').value.trim();
+        const telefonoForm = document.getElementById('telefono').value.trim();
+
+        try {
+            // Mostrar notificación visual en pantalla (Toast)
             const toast = document.getElementById('toast');
-            toast.classList.add('show-toast');
-            setTimeout(() => {
-                toast.classList.remove('show-toast');
-                this.reset();
-            }, 4000);
-        });
-    </script>
+            if (toast) {
+                toast.classList.add('show-toast');
+                setTimeout(() => { toast.classList.remove('show-toast'); }, 4000);
+            }
+
+            // Enviar datos en paralelo a Make.com
+            fetch(URL_MAKE, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ nombre: nombreForm, ubicacion: ubicacionForm, telefono: telefonoForm })
+            }).catch(err => console.error("Error Make:", err));
+
+            // Insertar directamente en Supabase (Ahora autorizado por la nueva RLS)
+            if (_supabase) {
+                const { data, error } = await _supabase
+                    .from('hosteles')
+                    .insert([
+                        { 
+                            nombre: nombreForm, 
+                            ubicacion: ubicacionForm,
+                            telefono: telefonoForm, 
+                            tipo_administracion: "POR DEFINIR",
+                            estado_aseo: "LIMPIO",
+                            estado_llaves: "EN OFICINA"
+                        }
+                    ]);
+
+                if (error) {
+                    console.error("Error en inserción:", error.message);
+                    alert("Error de base de datos: " + error.message);
+                } else {
+                    console.log("¡Propiedad guardada con éxito en Supabase!");
+                    document.getElementById('latenteForm').reset();
+                }
+            }
+        } catch (err) {
+            console.error("Error general:", err);
+        } finally {
+            formularioEnProceso = false;
+            if (botonEnvio) {
+                botonEnvio.disabled = false;
+                botonEnvio.innerHTML = "<span>SOLICITAR ACCESO PRIVADO</span>";
+            }
+        }
+    });
+</script>
+    </div> <!-- Cierre del contenedor principal -->
+
+    <footer class="footer">
+        <p>&copy; 2024 Latente Boutique Operations OS. Todos los derechos reservados.</p>
+    </footer>
+
+    <script src="dashboard.js"></script>
 </body>
+
 </html>
